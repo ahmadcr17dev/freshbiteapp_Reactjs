@@ -24,16 +24,14 @@ const App = () => {
   return (
     <>
       <Styledpage>
-        <Navbar setshowlogin={setshowlogin} />
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Home' element={<Home />} />
+          <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
+          <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
           <Route path='/Login' element={(showlogin ? <Login setshowlogin={setshowlogin} setshowregister={setshowregister} /> : <></>)} />
           <Route path='/Register' element={showregister ? <Register setshowregister={setshowregister} setshowlogin={setshowlogin} /> : <></>} />
-          <Route path='/shop' element={<Shop />} />
-          <Route path='/ProductDetail' element={<ProductDetail />} />
+          <Route path='/shop' element={<><Navbar setshowlogin={setshowlogin} /><Shop /><Footer /></>} />
+          <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
         </Routes>
-        <Footer />
       </Styledpage>
     </>
   )

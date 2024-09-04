@@ -14,11 +14,11 @@ const Styledsection = styled.section`
         justify-content: space-evenly;
         margin: 0rem auto 0rem auto;
         border: 1px solid #898989;
-        height: 30rem;
+        height: 35rem;
         width: 70rem;
         border-radius: 1rem;
         background-color: white;
-        padding: 3rem 0rem 3rem 0rem;
+        padding: 5rem 0rem 3rem 0rem;
         #product-info {
             width: 30rem;
         }
@@ -66,6 +66,19 @@ const Styledsection = styled.section`
             padding: auto;
             margin-right: .5rem;
         }
+    }
+    #addtocart {
+        width: 13rem;
+        font-size: 1.1rem;
+        padding: .5rem 1.9rem .5rem 1.9rem;
+        font-weight: 470;
+    }
+    #placeorder {
+        width: 20.77rem;
+        font-size: 1.1rem;
+        font-weight: 490;
+        padding: .5rem 1.9rem .5rem 1.9rem; 
+        margin: 1rem 0rem 0rem 0rem;
     }
 `;
 
@@ -147,6 +160,10 @@ const ProductDetail = () => {
                                             <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
                                             <input type='text' value={number} readOnly />
                                             <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button>
+                                            <button className='btn btn-success' id='addtocart'> Add to cart</button>
+                                        </div>
+                                        <div>
+                                            <button className='btn btn-danger' id='placeorder'>Place an Order</button>
                                         </div>
                                     </div>
                                 </div>

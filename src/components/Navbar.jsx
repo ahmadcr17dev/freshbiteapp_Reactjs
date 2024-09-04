@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { PiShoppingCartLight } from "react-icons/pi";
 import { FaBars } from "react-icons/fa6";
 import { NavLink } from 'react-router-dom';
-// import { auth } from "../firebase";
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -53,6 +52,7 @@ const Stylednavbar = styled.nav`
                 right: 8.7rem;
                 font-size: 10px;
                 border-radius: 100%;
+                background-color: red;
             }
         }
         a:nth-child(2) {
@@ -80,12 +80,10 @@ const Stylednavbar = styled.nav`
             margin-top: 100px;
             position: absolute;
             left: -1%;
-            /* width: 0%; */
             padding: 1.9rem 0rem 1rem 1.5rem;
             a {
                 font-size: 1rem;
                 padding: 15px 15px 15px 0px;
-                /* width: 100%; */
             }
             a:nth-child(4) {
                 font-size: 1rem;
@@ -165,7 +163,7 @@ const Navbar = ({ setshowlogin }) => {
                 <div>
                     <div>
                         <a href='#'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</a>
-                        <span className="badge badge-danger">1</span>
+                        <span className="badge badge-danger">0</span>
                     </div>
                     <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
                     <Styledbars href='#'>{<FaBars size={"1.7rem"} onClick={mobilemenu} />}</Styledbars>

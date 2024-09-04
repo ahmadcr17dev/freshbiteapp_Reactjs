@@ -13,7 +13,7 @@ const Styledsection = styled.div`
         height: 30rem;
         border: 1px solid #696969;
         border-radius: 1.5rem;
-        width: 36rem;
+        width: 38rem;
         h1 {
             color: whitesmoke;
             font-size: 3rem;
@@ -38,7 +38,7 @@ const Styledsection = styled.div`
         height: 30rem;
         border: 1px solid #696969;
         border-radius: 1.5rem;
-        width: 36rem;
+        width: 38rem;
         h1 {
             color: whitesmoke;
             font-size: 3rem;

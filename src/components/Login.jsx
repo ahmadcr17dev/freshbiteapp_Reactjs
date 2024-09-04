@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './images/logo.png';
 import styled from 'styled-components';
-// import { RxCross2 } from "react-icons/rx";
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -15,7 +14,7 @@ const Styledloginpanel = styled.div`
     display: flex;
     flex-direction: column;
     width: 300px;
-    margin: 1.7rem auto 0rem auto;
+    margin: 1.7rem auto 3rem auto;
     border: 1px solid #696969;
     padding: 1rem;
     border-radius: 10px;
@@ -36,7 +35,7 @@ const Styledloginpanel = styled.div`
         height: 2.5rem;
         border-radius: 0.3rem;
         border: 1px solid #696969;
-        margin-top: -0.5rem;
+        margin-top: 0rem;
         margin-bottom: 1rem;
     }
     button {
@@ -79,6 +78,28 @@ const Styledloginpanel = styled.div`
         margin-top: 15rem;
         margin-bottom: 5rem;
     }
+    #firstmsg {
+        background-color: white;
+        color: black;
+        padding: 10px;
+        position: fixed;
+        top: 47%;
+        right: 30%;
+        left: auto;
+        z-index: 1000;
+        border-radius: 4px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    }
+    #googlebutton {
+        background-color: whitesmoke;
+        color: #595959;
+    }
+    #googlebutton:hover {
+        background-color: white;
+    }
+    #googleicon {
+        margin: -.1rem .5rem 0rem 0rem;
+    }
 `;
 
 // const auth = getAuth(app);
@@ -87,32 +108,56 @@ const Login = ({ setshowregister }) => {
 
     const [email, SetEmail] = useState('');
     const [password, SetPassword] = useState('');
-    // const [error, setError] = useState('');
-    const Navigate = useNavigate();
+    const [alert, setalert] = useState(true);
+    const [firstmsg, setfirstmsg] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (alert) {
+            const timer = setTimeout(() => {
+                setalert(false);
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [alert]);
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
         if ((email === "") && (password === "")) {
-            document.getElementById("msg").innerText = "Email & Password is required";
+            setfirstmsg('Email & Password is required');
+            setalert(true);
+            return;
         }
         else if (email === "") {
-            document.getElementById("msg").innerText = "Email is required";
+            setfirstmsg("Email is required");
+            setalert(true);
+            return;
         }
         else if (password === "") {
-            document.getElementById("msg").innerText = "Password is required";
+            setfirstmsg("Password is required");
+            setalert(true);
+            return;
         }
         else if ((email !== "") && (password !== "")) {
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById("msg").innerText = "Login Successful";
-                console.log('User logged in:', userCredential.user);
-                Navigate('/Home');
-                // Redirect or perform other actions after successful login
-            } catch (error) {
-                //   console.error('Error logging in:', error);
-                //   setError(error.message);
-                document.getElementById("msg").innerText = "Login not found";
-                console.log("User not found");
+            if ((!email.includes("@")) || (!email.endsWith(".com"))) {
+                setfirstmsg("Put a valid Email Address");
+                setalert(true);
+                return;
+            }
+            else {
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    console.log('User logged in:', userCredential.user);
+                    navigate('/Home');
+                    // Redirect or perform other actions after successful login
+                } catch (error) {
+                    setfirstmsg("Login not found");
+                    setalert(true);
+                    SetEmail("");
+                    SetPassword("");
+                    return;
+                }
             }
         }
     };
@@ -122,19 +167,22 @@ const Login = ({ setshowregister }) => {
             <Styledloginpanel id='loginpanel'>
                 <div>
                     <Styledlogo src={logo} alt='SiteLogo' />
-                    {/* <a> {<RxCross2 size={"1.5rem"} color={"black"} onClick={() => setshowlogin(false)} />} </a> */}
                 </div>
                 <h3>Welcome back!</h3>
                 <label>Email</label>
                 <input type='email' placeholder='Enter your Email' value={email} onChange={(e) => SetEmail(e.target.value)} id='email' required />
                 <label>Password</label>
                 <input type='password' placeholder='Enter your Password' value={password} onChange={(e) => SetPassword(e.target.value)} id='password' required />
-                <p id='msg' style={{ color: "red", fontSize: "0.7rem" }}></p>
-                <button onClick={handleLogin} >Login</button>
+                <button onClick={handleLogin}>Login</button>
                 <div className="register">
                     <h5>Don't have an account</h5>
                     <NavLink to="/Register" onClick={() => setshowregister(true)} >Register</NavLink>
                 </div>
+                {alert && (
+                    <div id='firstmsg'>
+                        {firstmsg}
+                    </div>
+                )}
             </Styledloginpanel>
         </>
     )

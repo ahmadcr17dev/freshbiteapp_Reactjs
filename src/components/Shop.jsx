@@ -3,6 +3,7 @@ import { database } from '../firebase';
 import { collection, getDocs, setDoc, doc, deleteDoc, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import { MoonLoader } from 'react-spinners';
 
 const Styledsection = styled.section`
     margin: 10rem 2rem 5rem 2rem;
@@ -99,26 +100,32 @@ const Shop = () => {
 
     const [allproducts, setallproducts] = useState([]);
     const [search, setsearch] = useState();
+    const [loading, setloading] = useState(true);
 
     useEffect(() => {
         const fetchproducts = async () => {
-            const allproductscollection = collection(database, 'shop');
-            const allproductssnapshot = await getDocs(allproductscollection);
-            const allproductslist = allproductssnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setallproducts(allproductslist);
+            try {
+                const allproductscollection = collection(database, 'shop');
+                const allproductssnapshot = await getDocs(allproductscollection);
+                const allproductslist = allproductssnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setallproducts(allproductslist);
+                setloading(false);
+            }
+            catch (error) {
+                setloading(true);
+            }
         };
         fetchproducts();
     }, [])
 
     const buynow = async (product) => {
         try {
-
             const q = query(collection(database, 'productdetails'));
             const querysnap = await getDocs(q);
-            querysnap.forEach(async(doc) => {
+            querysnap.forEach(async (doc) => {
                 await deleteDoc(doc.ref);
             })
 
@@ -143,7 +150,6 @@ const Shop = () => {
                 productdata.size = product.size;
             }
             await setDoc(doc(database, "productdetails", product.id), productdata);
-            // alert("Product Added");
         }
         catch (e) {
             alert("Error Occured");
@@ -152,45 +158,49 @@ const Shop = () => {
 
     const handlebuynow = async (product) => {
         await buynow(product);
-        // navigate("/ProductDetail");
     }
 
     return (
         <>
-            <Styledsection>
-                <div id='sidebar'>
-                    <h1>Filter</h1>
-                    <input type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
-                </div>
-                <div id='shop-products'>
-                    <div className="container">
-                        <div className='row'>
-                            {allproducts.map((product) => (
-                                <div className='col-md-3 mb-3 col-6 mx-0' key={product.id} >
-                                    <div className="card">
-                                        <img src={product.imageurl} className="card-img-top" alt='Ahmad' />
-                                        <div className="card-body">
-                                            <p className="card-text" id='category'>{product.category}</p>
-                                            <h5 className="card-title" id='name'>{product.name}</h5>
-                                            <p className="card-text" id='price'>${product.price}</p>
-                                            <p className='card-text' id='stock'>Stock: {product.stock}</p>
-                                            {product.quantity && <p className='card-text' id='quantity'>Quantity: {product.quantity}kg</p>}
-                                            {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
-                                            {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
-                                            {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
-                                            <NavLink className="btn btn-danger container" onClick={() => handlebuynow(product)} to={"/ProductDetail"} > Buy Now </NavLink>
+            {loading ? (
+                <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
+            ) : (
+                <Styledsection>
+                    <div id='sidebar'>
+                        <h1>Filter</h1 >
+                        <input type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
+                    </div >
+                    <div id='shop-products'>
+                        <div className="container">
+                            <div className='row'>
+                                {allproducts.map((product) => (
+                                    <div className='col-md-3 mb-3 col-6 mx-0' key={product.id} >
+                                        <div className="card">
+                                            <img src={product.imageurl} className="card-img-top" alt='Ahmad' />
+                                            <div className="card-body">
+                                                <p className="card-text" id='category'>{product.category}</p>
+                                                <h5 className="card-title" id='name'>{product.name}</h5>
+                                                <p className="card-text" id='price'>${product.price}</p>
+                                                <p className='card-text' id='stock'>Stock: {product.stock}</p>
+                                                {product.quantity && <p className='card-text' id='quantity'>Quantity: {product.quantity}kg</p>}
+                                                {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
+                                                {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
+                                                {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
+                                                <NavLink className="btn btn-danger container" onClick={() => handlebuynow(product)} to={"/ProductDetail"} > Buy Now </NavLink>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))};
+                                ))};
+                            </div>
+                        </div>
+                        <div id='buttons'>
+                            <button >&laquo;</button>
+                            <button >&raquo;</button>
                         </div>
                     </div>
-                    <div id='buttons'>
-                        <button >&laquo;</button>
-                        <button >&raquo;</button>
-                    </div>
-                </div>
-            </Styledsection>
+                </Styledsection >
+            )}
+
         </>
     );
 }

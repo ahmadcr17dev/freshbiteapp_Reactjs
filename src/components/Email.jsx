@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../firebase";
@@ -110,22 +110,47 @@ const Styledsection = styled.section`
                 margin: 0.5rem auto 0rem auto;
                 text-align: center;
             }
-
         }
+    }
+    #firstmsg {
+        background-color: white;
+        color: black;
+        padding: 10px;
+        position: fixed;
+        top: 50%;
+        right: 40%;
+        left: auto;
+        z-index: 1000;
+        border-radius: 4px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
     }
 `;
 
 const Email = () => {
 
     const [Email, setEmail] = useState('');
+    const [alert, setalert] = useState(true);
+    const [msg, setmsg] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setalert(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, [alert])
+
 
     const subscribe = async (e) => {
         e.preventDefault();
         if (Email === "") {
-            alert("Email is required");
+            setalert(true);
+            setmsg('Email is required');
+            return;
         }
         else if ((!Email.includes("@")) || (!Email.endsWith(".com"))) {
-            alert("Put a Valid Email Address");
+            setalert(true);
+            setmsg('Put a valid email address');
+            return;
         }
         else {
             try {
@@ -133,14 +158,18 @@ const Email = () => {
                 const q = query(subscribeRef, where("Email", "==", Email));
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
-                    alert("This Email is already registered");
+                    setalert(true);
+                    setmsg('Already Registered');
+                    setEmail('');
                     return;
                 }
                 await addDoc(subscribeRef, { Email: Email });
-                alert("Email Successfuly registered");
-                setEmail("");
+                setalert(true);
+                setmsg('Successfully Registered');
             } catch (error) {
-                alert("Failed to register. try Again");
+                setalert(true);
+                setmsg('Failed to Subscribe. Try again');
+                setEmail('');
             }
         }
     }
@@ -153,6 +182,11 @@ const Email = () => {
                     <input id="email" type="email" placeholder="Enter Your Email Address" required value={Email} onChange={(e) => setEmail(e.target.value)} />
                     <button onClick={subscribe} >Subscribe</button>
                 </div>
+                {alert && (
+                    <div id='firstmsg'>
+                        {msg}
+                    </div>
+                )}
             </Styledsection>
         </>
     );

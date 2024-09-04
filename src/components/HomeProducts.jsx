@@ -162,7 +162,6 @@ const HomeProducts = () => {
         document.getElementById("others").style.display = "flex";
     }
 
-
     return (
         <>
             <Styledsection>
