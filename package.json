@@ -1,5 +1,4 @@
 {
-  "homepage": "https://ahmad17crdev.github.io/freshbiteapp_Reactjs",
   "name": "freshbiteapp",
   "private": true,
   "version": "0.0.0",
@@ -8,9 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 8080",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "preview": "vite preview"
   },
   "dependencies": {
     "firebase": "^10.13.1",
