@@ -153,7 +153,7 @@ const Checkout = () => {
                 <Styledsection>
                     <form id="myform" className="form-check">
                         <div id="formcontent" className="row g-3">
-                            <h1>Billing Informations</h1>
+                            <h1>Billing Information</h1>
                             <div className="col-md-6">
                                 <label for="firstname" className="form-label">First Name</label>
                                 <input type="text" className="form-control" placeholder="first name" value={firstname} onChange={(e) => setfirstname(e.target.value)} required />
