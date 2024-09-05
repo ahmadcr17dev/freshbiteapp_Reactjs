@@ -24,6 +24,7 @@ const App = () => {
   return (
     <>
       <Styledpage>
+        <Navbar />
         <Routes>
           <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
           <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
