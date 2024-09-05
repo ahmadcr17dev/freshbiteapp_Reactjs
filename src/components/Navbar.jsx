@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './images/logo.png';
 import styled from 'styled-components';
 import { PiShoppingCartLight } from "react-icons/pi";
 import { FaBars } from "react-icons/fa6";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -71,6 +73,10 @@ const Stylednavbar = styled.nav`
             color: white;
         }
     }
+    #logout {
+        font-size: 1rem;
+        padding: 5px 30px 0px 30px;
+    }
     @media (max-width: 601px) and (min-width: 0px) {
         background-color: #fff;
         margin-top: 19px;
@@ -133,6 +139,31 @@ const Styledbars = styled.a`
 
 const Navbar = ({ setshowlogin }) => {
 
+    const [user, setuser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const activeuser = onAuthStateChanged(auth, (currentuser) => {
+            if (currentuser) {
+                setuser(currentuser);
+            }
+            else {
+                setuser(null);
+            }
+        });
+        return () => activeuser();
+    }, [])
+
+    const handlelogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/Home");
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
+
     const mobilemenu = () => {
         let sideopen = document.getElementById("menuopen");
         if (sideopen.style.display !== "none") {
@@ -165,7 +196,11 @@ const Navbar = ({ setshowlogin }) => {
                         <a href='#'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</a>
                         <span className="badge badge-danger">0</span>
                     </div>
-                    <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
+                    {user ? (
+                        <NavLink onClick={handlelogout} id='logout'>LogOut</NavLink>
+                    ) : (
+                        <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
+                    )}
                     <Styledbars href='#'>{<FaBars size={"1.7rem"} onClick={mobilemenu} />}</Styledbars>
                 </div>
             </Stylednavbar>
