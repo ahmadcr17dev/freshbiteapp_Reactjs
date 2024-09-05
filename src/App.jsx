@@ -8,6 +8,7 @@ import Shop from './components/Shop';
 import ProductDetail from './components/ProductDetail';
 import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
+import Checkout from './components/Checkout';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -24,7 +25,6 @@ const App = () => {
   return (
     <>
       <Styledpage>
-        <Navbar />
         <Routes>
           <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
           <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
@@ -32,6 +32,7 @@ const App = () => {
           <Route path='/Register' element={showregister ? <Register setshowregister={setshowregister} setshowlogin={setshowlogin} /> : <></>} />
           <Route path='/shop' element={<><Navbar setshowlogin={setshowlogin} /><Shop /><Footer /></>} />
           <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
+          <Route path='/checkout' element={<><Navbar setshowlogin={setshowlogin} /><Checkout /><Footer /></>} />
         </Routes>
       </Styledpage>
     </>

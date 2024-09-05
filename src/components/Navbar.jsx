@@ -157,7 +157,7 @@ const Navbar = ({ setshowlogin }) => {
     const handlelogout = async () => {
         try {
             await signOut(auth);
-            navigate("/Home");
+            navigate("/");
         } catch (error) {
             console.log("error", error);
         }

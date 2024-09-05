@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { getDocs, collection } from 'firebase/firestore';
 import { database } from '../firebase';
 import { MoonLoader } from 'react-spinners';
+import { NavLink } from 'react-router-dom';
 
 const Styledsection = styled.section`
     background-color: white;
@@ -131,6 +132,7 @@ const ProductDetail = () => {
     const handledecrement = () => {
         setnumber(number - 1);
         setPrice(prevPrice => (parseFloat(prevPrice) - initialPrice).toFixed(2));
+        setupdateprice(setPrice);
     }
 
     return (
@@ -163,7 +165,7 @@ const ProductDetail = () => {
                                             <button className='btn btn-success' id='addtocart'> Add to cart</button>
                                         </div>
                                         <div>
-                                            <button className='btn btn-danger' id='placeorder'>Place an Order</button>
+                                            <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
                                         </div>
                                     </div>
                                 </div>
