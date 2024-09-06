@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { database } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { MoonLoader } from "react-spinners";
 
 const Styledsection = styled.section`
@@ -97,8 +97,7 @@ const Checkout = () => {
 
     const [products, setproducts] = useState([]);
     const [loading, setloading] = useState(true);
-    const [firstname, setfirstname] = useState('');
-    const [lastname, setlastname] = useState('');
+    const [name, setname] = useState('');
     const [house, sethouse] = useState('');
     const [street, setstreet] = useState('');
     const [zip, setzip] = useState('');
@@ -106,9 +105,17 @@ const Checkout = () => {
     const [email, setemail] = useState('');
     const [selectedState, setSelectedState] = useState('');
     const [cities, setCities] = useState([]);
+    const [payment, setpayment] = useState('');
+    const [city, setcity] = useState('');
+    const [storedprice, setstoredprice] = useState(0);
+
+    useEffect(() => {
+        const price = parseFloat(localStorage.getItem('price')) || 0;
+        setstoredprice(price);
+    }, []);
 
     const data = {
-        "Islamabad": ["Anywhere"],
+        "Islamabad": ["Islamabad"],
         "Punjab": ["Lahore", "Rawalpindi", "Faisalabad", "Multan", "Sargodha", "Bahawalpur"],
         "Sindh": ["Karachi", "Hydrabad", "Sakkhar"],
         "Balochistan": ["Quetta", "Sibbi", "Gawadar"],
@@ -144,6 +151,26 @@ const Checkout = () => {
         return () => clearTimeout(timer);
     }, [])
 
+    const confirmorder = async (e) => {
+        e.preventDefault();
+        try {
+            const billingdoc = collection(database, 'billinginfo');
+            await addDoc(billingdoc, {
+                fname: name,
+                house: house,
+                street: street,
+                state: selectedState,
+                city: city,
+                zip: zip,
+                phone: phone,
+                email: email,
+                payment: payment,
+            });
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    }
+
 
     return (
         <>
@@ -151,16 +178,12 @@ const Checkout = () => {
                 <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
             ) : (
                 <Styledsection>
-                    <form id="myform" className="form-check">
+                    <form id="myform" className="form-check" onSubmit={confirmorder}>
                         <div id="formcontent" className="row g-3">
                             <h1>Billing Information</h1>
-                            <div className="col-md-6">
-                                <label for="firstname" className="form-label">First Name</label>
-                                <input type="text" className="form-control" placeholder="first name" value={firstname} onChange={(e) => setfirstname(e.target.value)} required />
-                            </div>
-                            <div className="col-md-6">
-                                <label for="lastname" className="form-label">Last Name</label>
-                                <input type="text" className="form-control" placeholder="last name" required value={lastname} onChange={(e) => setlastname(e.target.value)} />
+                            <div className="col-md-12">
+                                <label for="firstname" className="form-label">Full Name</label>
+                                <input type="text" className="form-control" placeholder="first name" value={name} onChange={(e) => setname(e.target.value)} required />
                             </div>
                             <div className="col-12">
                                 <label for="address1" className="form-label">Enter House No.</label>
@@ -183,7 +206,7 @@ const Checkout = () => {
                             </div>
                             <div className="col-md-6">
                                 <label>Select City:</label>
-                                <select required>
+                                <select required value={city} onChange={(e) => setcity(e.target.value)}>
                                     <option value="">Select a city</option>
                                     {cities.length > 0 ? (
                                         cities.map((city) => (
@@ -215,26 +238,26 @@ const Checkout = () => {
                                     <h5>Your Order</h5>
                                     <div id="price">
                                         <p>{product.name}</p>
-                                        <p>${product.price}</p>
+                                        <p>${storedprice}</p>
                                     </div>
                                     <div id="subtotal">
                                         <p>SubTotal</p>
-                                        <p style={{ color: "red" }}>${product.price}</p>
+                                        <p style={{ color: "red" }}>${storedprice}</p>
                                     </div>
                                     <hr />
                                     <div id="total">
                                         <p>Total</p>
-                                        <p style={{ color: "red" }}>${product.price}</p>
+                                        <p style={{ color: "red" }}>${storedprice}</p>
                                     </div>
                                     <hr />
                                     <h6>Payment Methods</h6>
                                     <div>
-                                        <input type="radio" required name="option" />
-                                        <label>Direct Bank Transfer</label>
+                                        <input type="radio" required name="option" value="Direct Bank Transfer" checked={payment === 'Direct Bank Transfer'} onChange={(e) => setpayment(e.target.value)} />
+                                        <label htmlFor="Direct Bank Transfer">Direct Bank Transfer</label>
                                     </div>
                                     <div>
-                                        <input type="radio" required name="option" />
-                                        <label>Cash on Deliverey</label>
+                                        <input type="radio" required name="option" value="Cash on Deliverey" onChange={(e) => setpayment(e.target.value)} checked={payment === 'Cash on Deliverey'} />
+                                        <label htmlFor="Cash on Deliverey">Cash on Deliverey</label>
                                     </div>
                                 </div>
                             ))}

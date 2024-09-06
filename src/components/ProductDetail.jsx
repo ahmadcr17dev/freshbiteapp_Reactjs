@@ -88,8 +88,9 @@ const ProductDetail = () => {
     const [product, setproduct] = useState([]);
     const [loading, setloading] = useState(true);
     const [number, setnumber] = useState(1);
-    const [price, setPrice] = useState(product.price);
     const [initialPrice, setInitialPrice] = useState(0);
+    const price1 = parseFloat(localStorage.getItem('price')) || product.price;
+    const [price, setPrice] = useState(price1);
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -116,15 +117,11 @@ const ProductDetail = () => {
                 }
             };
             fetchproducts();
-        }, 5000)
+        }, 4000)
         return () => clearTimeout(delay);
     }, [])
 
-    // if (loading) {
-    //     <BounceLoader size={"6rem"} id='loader' />
-    // }
-
-    const handleincrement = () => {
+    const handleincrement = async () => {
         setnumber(number + 1);
         setPrice(prevPrice => (parseFloat(prevPrice) + initialPrice).toFixed(2));
     }
@@ -132,13 +129,16 @@ const ProductDetail = () => {
     const handledecrement = () => {
         setnumber(number - 1);
         setPrice(prevPrice => (parseFloat(prevPrice) - initialPrice).toFixed(2));
-        setupdateprice(setPrice);
     }
+
+    useEffect(() => {
+        localStorage.setItem("price", price);
+    }, [price]);
 
     return (
         <>
             {loading ? (
-                <p className='container d-flex justify-content-center align-items-center' style={{marginTop: "5rem"}}> <MoonLoader size={60} color={"red"} /> </p>
+                <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
             ) : (
                 <Styledsection>
                     <div>
@@ -157,12 +157,12 @@ const ProductDetail = () => {
                                         {product.bunch && <p id='bunch'>Bunch: {product.bunch}</p>}
                                         {product.size && <p id='size'>size: {product.size}</p>}
                                         {product.dozen && <p id='dozen'>Dozen: {product.dozen}</p>}
-                                        <p id='price'>$ {price}</p>
+                                        <p id='price'>${price}</p>
                                         <div id='plusminus'>
                                             <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
                                             <input type='text' value={number} readOnly />
                                             <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button>
-                                            <button className='btn btn-success' id='addtocart'> Add to cart</button>
+                                            <NavLink to='/Cart' className='btn btn-success' id='addtocart'> Add to cart</NavLink>
                                         </div>
                                         <div>
                                             <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
