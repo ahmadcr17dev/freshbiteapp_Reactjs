@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { database } from "../firebase";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { MoonLoader } from "react-spinners";
 
 const Styledsection = styled.section`
@@ -95,7 +95,7 @@ const Styledsection = styled.section`
 
 const Checkout = () => {
 
-    const [products, setproducts] = useState([]);
+    const [products, setproducts] = useState('');
     const [loading, setloading] = useState(true);
     const [name, setname] = useState('');
     const [house, sethouse] = useState('');
@@ -108,11 +108,8 @@ const Checkout = () => {
     const [payment, setpayment] = useState('');
     const [city, setcity] = useState('');
     const [storedprice, setstoredprice] = useState(0);
-
-    useEffect(() => {
-        const price = parseFloat(localStorage.getItem('price')) || 0;
-        setstoredprice(price);
-    }, []);
+    const [shipping, setshipping] = useState(3);
+    const [dozen, setdozen] = useState(1);
 
     const data = {
         "Islamabad": ["Islamabad"],
@@ -130,26 +127,30 @@ const Checkout = () => {
         setCities(data[state] || []);
     };
 
+
     useEffect(() => {
         const timer = setTimeout(() => {
-            const fetchproducts = async () => {
+            const fetchs = async () => {
                 try {
-                    const productdocs = collection(database, 'productdetails');
-                    const snapdocs = await getDocs(productdocs);
-                    const docslist = snapdocs.docs.map((doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                    setproducts(docslist);
+                    const price = parseFloat(localStorage.getItem('price')) || 0;
+                    setstoredprice(price);
+                    const ship = parseFloat(localStorage.getItem('ship')) || 3;
+                    setshipping(parseFloat(ship + price).toFixed(2));
+                    const storedname = localStorage.getItem('productname');
+                    if (storedname) {
+                        setproducts(storedname);
+                    }
+                    const dozen = parseFloat(localStorage.getItem('dozen')) || 1;
+                    setdozen(dozen);
                     setloading(false);
                 } catch (error) {
                     setloading(true);
                 }
             }
-            fetchproducts();
-        }, 3000)
+            fetchs();
+        }, 1500);
         return () => clearTimeout(timer);
-    }, [])
+    }, []);
 
     const confirmorder = async (e) => {
         e.preventDefault();
@@ -171,7 +172,6 @@ const Checkout = () => {
         }
     }
 
-
     return (
         <>
             {loading ? (
@@ -187,7 +187,7 @@ const Checkout = () => {
                             </div>
                             <div className="col-12">
                                 <label for="address1" className="form-label">Enter House No.</label>
-                                <input type="text" className="form-control" placeholder="Enter your house np." required value={house} onChange={(e) => sethouse(e.target.value)} />
+                                <input type="text" className="form-control" placeholder="Enter your house no." required value={house} onChange={(e) => sethouse(e.target.value)} />
                             </div>
                             <div className="col-12">
                                 <label for="address2" className="form-label">Enter street address</label>
@@ -233,39 +233,39 @@ const Checkout = () => {
                             </div>
                         </div>
                         <div id="myorder">
-                            {products.map((product) => (
-                                <div key={product.id}>
-                                    <h5>Your Order</h5>
-                                    <div id="price">
-                                        <p>{product.name}</p>
-                                        <p>${storedprice}</p>
-                                    </div>
-                                    <div id="subtotal">
-                                        <p>SubTotal</p>
-                                        <p style={{ color: "red" }}>${storedprice}</p>
-                                    </div>
-                                    <hr />
-                                    <div id="total">
-                                        <p>Total</p>
-                                        <p style={{ color: "red" }}>${storedprice}</p>
-                                    </div>
-                                    <hr />
-                                    <h6>Payment Methods</h6>
-                                    <div>
-                                        <input type="radio" required name="option" value="Direct Bank Transfer" checked={payment === 'Direct Bank Transfer'} onChange={(e) => setpayment(e.target.value)} />
-                                        <label htmlFor="Direct Bank Transfer">Direct Bank Transfer</label>
-                                    </div>
-                                    <div>
-                                        <input type="radio" required name="option" value="Cash on Deliverey" onChange={(e) => setpayment(e.target.value)} checked={payment === 'Cash on Deliverey'} />
-                                        <label htmlFor="Cash on Deliverey">Cash on Deliverey</label>
-                                    </div>
-                                </div>
-                            ))}
+                            <h5>Your Order</h5>
+                            <div id="price">
+                                <p>{products} <br /> <p style={{ fontWeight: "400", fontSize: "0.8rem" }}>Quantity: {dozen}</p> </p>
+                                <p>${storedprice}</p>
+                            </div>
+                            <div id="subtotal">
+                                <p>SubTotal</p>
+                                <p style={{ color: "red" }}>${storedprice}</p>
+                            </div>
+                            <div id="subtotal">
+                                <p>Shipping</p>
+                                <p style={{ color: "red" }}>$3.00</p>
+                            </div>
+                            <hr />
+                            <div id="total">
+                                <p>Total</p>
+                                <p style={{ color: "red" }}>${shipping}</p>
+                            </div>
+                            <hr />
+                            <h6>Payment Methods</h6>
+                            <div>
+                                <input type="radio" required name="option" value="Direct Bank Transfer" checked={payment === 'Direct Bank Transfer'} onChange={(e) => setpayment(e.target.value)} />
+                                <label htmlFor="Direct Bank Transfer">Direct Bank Transfer</label>
+                            </div>
+                            <div>
+                                <input type="radio" required name="option" value="Cash on Deliverey" onChange={(e) => setpayment(e.target.value)} checked={payment === 'Cash on Deliverey'} />
+                                <label htmlFor="Cash on Deliverey">Cash on Deliverey</label>
+                            </div>
                             <p id="para">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
                             <button type="submit" className="container btn btn-danger">Confirm order</button>
                         </div>
                     </form>
-                </Styledsection>
+                </Styledsection >
             )}
         </>
     );

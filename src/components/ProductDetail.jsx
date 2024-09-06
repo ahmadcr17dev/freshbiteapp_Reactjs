@@ -15,7 +15,7 @@ const Styledsection = styled.section`
         justify-content: space-evenly;
         margin: 0rem auto 0rem auto;
         border: 1px solid #898989;
-        height: 35rem;
+        height: 38rem;
         width: 70rem;
         border-radius: 1rem;
         background-color: white;
@@ -91,6 +91,10 @@ const ProductDetail = () => {
     const [initialPrice, setInitialPrice] = useState(0);
     const price1 = parseFloat(localStorage.getItem('price')) || product.price;
     const [price, setPrice] = useState(price1);
+    const shipping = parseFloat(localStorage.getItem('ship')) || 3.00;
+    const [ship, setship] = useState(shipping);
+    const productname = localStorage.getItem('dozen') || 1;
+    const [dozen, setdozen] = useState(productname);
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -104,6 +108,7 @@ const ProductDetail = () => {
                     }));
                     setproduct(allproductslist);
                     setloading(false);
+                    localStorage.setItem('productname', allproductslist[0].name);
                 }
                 catch (error) {
                     setloading(true);
@@ -133,7 +138,11 @@ const ProductDetail = () => {
 
     useEffect(() => {
         localStorage.setItem("price", price);
-    }, [price]);
+        localStorage.setItem("ship", ship);
+        setship(setPrice + 3);
+        localStorage.setItem("dozen", dozen);
+        setdozen((number + 1) - 1);
+    }, [price, ship, dozen]);
 
     return (
         <>
