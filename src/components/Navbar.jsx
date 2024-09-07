@@ -193,7 +193,7 @@ const Navbar = ({ setshowlogin }) => {
                 </div>
                 <div>
                     <div>
-                        <a href='#'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</a>
+                        <NavLink to='/Cart'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</NavLink>
                         <span className="badge badge-danger">0</span>
                     </div>
                     {user ? (

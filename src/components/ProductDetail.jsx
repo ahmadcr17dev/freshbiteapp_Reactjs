@@ -81,6 +81,18 @@ const Styledsection = styled.section`
         padding: .5rem 1.9rem .5rem 1.9rem; 
         margin: 1rem 0rem 0rem 0rem;
     }
+    #msg {
+        background-color: white;
+        color: black;
+        padding: 10px;
+        position: fixed;
+        top: 15%;
+        right: 5%;
+        left: auto;
+        z-index: 1000;
+        border-radius: 4px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    }
 `;
 
 const ProductDetail = () => {
@@ -95,6 +107,8 @@ const ProductDetail = () => {
     const [ship, setship] = useState(shipping);
     const productname = localStorage.getItem('dozen') || 1;
     const [dozen, setdozen] = useState(productname);
+    const [alert, setalert] = useState(true);
+    const [msg, setmsg] = useState('');
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -144,6 +158,15 @@ const ProductDetail = () => {
         setdozen((number + 1) - 1);
     }, [price, ship, dozen]);
 
+    useEffect(() => {
+        if (alert) {
+            const timer = setTimeout(() => {
+                setalert(false);
+            }, 3000);
+            return () => clearTimeout(timer);
+        };
+    }, [alert]);
+
     return (
         <>
             {loading ? (
@@ -171,11 +194,16 @@ const ProductDetail = () => {
                                             <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
                                             <input type='text' value={number} readOnly />
                                             <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button>
-                                            <NavLink to='/Cart' className='btn btn-success' id='addtocart'> Add to cart</NavLink>
+                                            <button className='btn btn-success' id='addtocart'> Add to cart</button>
                                         </div>
                                         <div>
                                             <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
                                         </div>
+                                        {alert && (
+                                            <div id='msg'>
+                                                {msg}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))

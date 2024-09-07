@@ -4,6 +4,9 @@ import { collection, getDocs, setDoc, doc, deleteDoc, query } from 'firebase/fir
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
+import { IoCartSharp } from 'react-icons/io5';
+import { MdLink } from 'react-icons/md';
+import { IoMdHeart } from 'react-icons/io';
 
 const Styledsection = styled.section`
     margin: 10rem 2rem 5rem 2rem;
@@ -75,23 +78,24 @@ const Styledsection = styled.section`
             line-height: .7rem;
         }
     }
-    #buttons {
+    #icons {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin: 3rem 1rem 1rem 1rem;
-        button {
-            padding: .5rem 1rem .5rem 1rem;
-            font-size: 1rem;
-            border: 0px;
-            border-radius: 50%;
+        justify-content: space-evenly;
+        margin: 1.8rem 0rem 0rem 0rem;
+        .icons {
             background-color: #898989;
+            border-radius: 100%;
             color: white;
+            height: 35px;
+            width: 35px;
         }
-        button:hover {
+        .icons:hover {
             background-color: black;
-            color: white;
-            cursor: pointer;
+        }
+        .icon {
+            display: block;
+            margin: .5rem auto auto auto;
+            padding: auto;
         }
     }
 `;
@@ -158,6 +162,15 @@ const Shop = () => {
 
     const handlebuynow = async (product) => {
         await buynow(product);
+    };
+
+    const addtocart = async (product) => {
+        if (!product) return;
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push(product);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert(`${product.name} has been added to the cart`);
+        console.log(JSON.parse(localStorage.getItem('cart')));
     }
 
     return (
@@ -186,7 +199,11 @@ const Shop = () => {
                                                 {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
                                                 {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
                                                 {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
-                                                <NavLink className="btn btn-danger container" onClick={() => handlebuynow(product)} to={"/ProductDetail"} > Buy Now </NavLink>
+                                                <div id='icons'>
+                                                    <NavLink className='icons' to={'/ProductDetail'} onClick={() => handlebuynow(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
+                                                    <NavLink className='icons' onClick={() => addtocart(product)}><IoCartSharp className='icon' size={"1.1rem"} /></NavLink>
+                                                    <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} /></NavLink>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
