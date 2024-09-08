@@ -5,10 +5,13 @@ import HomeMid from "./HomeMid";
 import Email from "./Email";
 import HomeProducts from "./HomeProducts";
 import { MoonLoader } from "react-spinners";
+import myContext from "./context/mycontext";
+import { useContext } from "react";
 
 const Home = () => {
 
     const [loading, setloading] = useState(true);
+    const context = useContext(myContext);
 
     useEffect(() => {
         const timer = setTimeout(() => {

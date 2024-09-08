@@ -11,6 +11,8 @@ import styled from 'styled-components';
 import Checkout from './components/Checkout';
 import Cart from './components/Cart';
 import About from './components/About';
+import MyState from './components/context/mystate';
+import { Toaster } from 'react-hot-toast';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -26,19 +28,22 @@ const App = () => {
 
   return (
     <>
-      <Styledpage>
-        <Routes>
-          <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
-          <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
-          <Route path='/Login' element={(showlogin ? <Login setshowlogin={setshowlogin} setshowregister={setshowregister} /> : <></>)} />
-          <Route path='/Register' element={showregister ? <Register setshowregister={setshowregister} setshowlogin={setshowlogin} /> : <></>} />
-          <Route path='/shop' element={<><Navbar setshowlogin={setshowlogin} /><Shop /><Footer /></>} />
-          <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
-          <Route path='/checkout' element={<><Navbar setshowlogin={setshowlogin} /><Checkout /><Footer /></>} />
-          <Route path='/Cart' element={<><Navbar setshowlogin={setshowlogin} /><Cart /><Footer /></>} />
-          <Route path='/about' element={<><Navbar setshowlogin={setshowlogin} /><About /><Footer /></>} />
-        </Routes>
-      </Styledpage>
+      <MyState>
+        <Styledpage>
+          <Routes>
+            <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
+            <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
+            <Route path='/Login' element={(showlogin ? <Login setshowlogin={setshowlogin} setshowregister={setshowregister} /> : <></>)} />
+            <Route path='/Register' element={showregister ? <Register setshowregister={setshowregister} setshowlogin={setshowlogin} /> : <></>} />
+            <Route path='/shop' element={<><Navbar setshowlogin={setshowlogin} /><Shop /><Footer /></>} />
+            <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
+            <Route path='/checkout' element={<><Navbar setshowlogin={setshowlogin} /><Checkout /><Footer /></>} />
+            <Route path='/Cart' element={<><Navbar setshowlogin={setshowlogin} /><Cart /><Footer /></>} />
+            <Route path='/about' element={<><Navbar setshowlogin={setshowlogin} /><About /><Footer /></>} />
+          </Routes>
+          <Toaster />
+        </Styledpage>
+      </MyState>
     </>
   )
 }

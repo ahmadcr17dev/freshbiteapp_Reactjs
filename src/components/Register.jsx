@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import logo from './images/logo.png';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
-import { auth, provider } from '../firebase';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, database, provider } from '../firebase';
 import { FcGoogle } from "react-icons/fc";
+import toast from 'react-hot-toast';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -15,7 +17,7 @@ const Styledloginpanel = styled.div`
     display: flex;
     flex-direction: column;
     width: 300px;
-    margin: 1.7rem auto 3rem auto;
+    margin: 3rem auto 3rem auto;
     border: 1px solid #696969;
     padding: 1rem;
     border-radius: 10px;
@@ -79,18 +81,6 @@ const Styledloginpanel = styled.div`
         /* margin-top: 15rem; */
         margin-bottom: 5rem;
     }
-    #firstmsg {
-        background-color: white;
-        color: black;
-        padding: 10px;
-        position: fixed;
-        top: 47%;
-        right: 30%;
-        left: auto;
-        z-index: 1000;
-        border-radius: 4px;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-    }
     #googlebutton {
         background-color: whitesmoke;
         color: #595959;
@@ -105,67 +95,51 @@ const Styledloginpanel = styled.div`
 
 const Register = ({ setshowlogin }) => {
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [cnfrmpassword, setCnfrmpassword] = useState('');
-    const [alert, setalert] = useState(true);
-    const [msg, setmsg] = useState('');
+    const [register, setregister] = useState({
+        name: "",
+        email: "",
+        password: "",
+        role: "user"
+    });
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (alert) {
-            const timer = setTimeout(() => {
-                setalert(false);
-            }, 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [alert]);
-
 
     const UserRegister = async (e) => {
         e.preventDefault();
-        if ((email === "") && (password === "") && (cnfrmpassword === "")) {
-            setmsg("Email & Password is required");
-            setalert(true);
-            return;
-        }
-        else if (email === '') {
-            setmsg("Email is required");
-            setalert(true);
-            return;
-        }
-        else if (password === '') {
-            setmsg("Password is required");
-            setalert(true);
-            return;
-        }
-        else if (cnfrmpassword === '') {
-            setmsg("Confirm Password is required");
-            setalert(true);
-            return;
-        }
-        if (password !== cnfrmpassword) {
-            setmsg("Password & Confirm Password does not match");
-            setalert(true);
+        try {
+            const users = await createUserWithEmailAndPassword(auth, register.email, register.password);
+            const user = {
+                name: register.name,
+                email: users.user.email,
+                uid: users.user.uid,
+                role: register.role,
+                time: Timestamp.now(),
+                date: new Date().toLocaleString(
+                    "en-US",
+                    {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric'
+                    }
+                )
+            };
+            const userref = collection(database, 'user');
+            addDoc(userref, user);
+
+            setregister({
+                name: "",
+                email: "",
+                password: "",
+            })
+
+            toast.success("Registration Successful");
+            navigate('/Login');
+            console.log("Account Created", users);
+        } catch (error) {
+            toast.error("User Already Existed");
+            setEmail('');
             setPassword('');
             setCnfrmpassword('');
-            return;
-        }
-        else if ((email !== "") && (password !== "") && (cnfrmpassword !== "")) {
-            try {
-                const registercredentials = await createUserWithEmailAndPassword(auth, email, password);
-                setmsg("Registration Successful");
-                setalert(true);
-                navigate('/Login');
-                console.log("Account Created", registercredentials);
-            } catch (error) {
-                setmsg("User Already Existed");
-                setalert(true);
-                setEmail('');
-                setPassword('');
-                setCnfrmpassword('');
-                console.log("Already Exists");
-            }
+            console.log("Already Exists");
         }
     }
 
@@ -198,25 +172,28 @@ const Register = ({ setshowlogin }) => {
                     <Styledlogo src={logo} alt='SiteLogo' />
                 </div>
                 <h3>Make Some Change!</h3>
-                <label>Email</label>
-                <input type='email' placeholder='Enter your Email' value={email} onChange={(e) => setEmail(e.target.value)} required id="email" />
-                <label>Password</label>
-                <input type='password' placeholder='Enter your password' value={password} onChange={(e) => setPassword(e.target.value)} required id='password' />
-                <label>Confirm Password</label>
-                <input type='password' placeholder='Re-write your password' value={cnfrmpassword} onChange={(e) => setCnfrmpassword(e.target.value)} required id='cnfrmpassword' />
-                <button onClick={UserRegister} >Register</button>
-                <div>
+                <form onSubmit={UserRegister}>
+                    <div className="mb-0" style={{ flexDirection: "column" }}>
+                        <label for="exampleInputEmail1" className="form-label">Name</label>
+                        <input type="name" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder='Name' required value={register.name} onChange={(e) => setregister({ ...register, name: e.target.value })} />
+                    </div>
+                    <div className="mb-0" style={{ flexDirection: "column" }}>
+                        <label for="exampleInputEmail1" className="form-label">Email</label>
+                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder='Email' required value={register.email} onChange={(e) => setregister({ ...register, email: e.target.value })} />
+                    </div>
+                    <div className="mb-0" style={{ flexDirection: "column" }}>
+                        <label for="exampleInputPassword1" className="form-label">Password</label>
+                        <input type="password" className="form-control" id="exampleInputPassword1" placeholder='Password' required value={register.password} onChange={(e) => setregister({ ...register, password: e.target.value })} />
+                    </div>
+                    <button type="submit" className="btn btn-primary container">Submit</button>
+                </form>
+                <div className="register">
                     <h5>Already have an account</h5>
-                    <NavLink to="/Login" onClick={() => setshowlogin(true)}>Login</NavLink>
+                    <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
                 </div>
                 <div>
                     <button className='container' id='googlebutton' onClick={googleregister} ><FcGoogle size={"1.1rem"} id='googleicon' />Continue with Google</button>
                 </div>
-                {alert && (
-                    <div id='firstmsg'>
-                        {msg}
-                    </div>
-                )}
             </Styledloginpanel>
         </>
     )

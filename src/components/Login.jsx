@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import logo from './images/logo.png';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, database } from '../firebase';
+import toast from 'react-hot-toast';
+import { collection, onSnapshot, QuerySnapshot, where, query } from 'firebase/firestore';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -68,99 +70,57 @@ const Styledloginpanel = styled.div`
             margin-top: -0.1rem;
         }
     }
-    //div:nth-child(9) {
-    //    position: absolute;
-    //    top: 23%;
-    //    right: 40%;
-   // }
     @media (max-width: 601px) and (min-width: 0px) {
         background-color: white;
         margin-top: 15rem;
         margin-bottom: 5rem;
     }
-    #firstmsg {
-        background-color: white;
-        color: black;
-        padding: 10px;
-        position: fixed;
-        top: 47%;
-        right: 30%;
-        left: auto;
-        z-index: 1000;
-        border-radius: 4px;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-    }
-    #googlebutton {
-        background-color: whitesmoke;
-        color: #595959;
-    }
-    #googlebutton:hover {
-        background-color: white;
-    }
-    #googleicon {
-        margin: -.1rem .5rem 0rem 0rem;
-    }
 `;
-
-// const auth = getAuth(app);
 
 const Login = ({ setshowregister }) => {
 
-    const [email, SetEmail] = useState('');
-    const [password, SetPassword] = useState('');
-    const [alert, setalert] = useState(true);
-    const [firstmsg, setfirstmsg] = useState('');
+    const [login, setlogin] = useState({
+        email: "",
+        password: "",
+    });
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (alert) {
-            const timer = setTimeout(() => {
-                setalert(false);
-            }, 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [alert]);
-
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if ((email === "") && (password === "")) {
-            setfirstmsg('Email & Password is required');
-            setalert(true);
-            return;
-        }
-        else if (email === "") {
-            setfirstmsg("Email is required");
-            setalert(true);
-            return;
-        }
-        else if (password === "") {
-            setfirstmsg("Password is required");
-            setalert(true);
-            return;
-        }
-        else if ((email !== "") && (password !== "")) {
-            if ((!email.includes("@")) || (!email.endsWith(".com"))) {
-                setfirstmsg("Put a valid Email Address");
-                setalert(true);
-                return;
+        try {
+            const users = await signInWithEmailAndPassword(auth, login.email, login.password);
+            try {
+                const q = query(
+                    collection(database, 'user'),
+                    where('uid', '==', users?.user?.uid)
+                )
+                const data = onSnapshot(q, (QuerySnapshot) => {
+                    let user;
+                    QuerySnapshot.forEach((doc) => user = doc.data());
+                    localStorage.setItem('users', JSON.stringify(user));
+                    setlogin({
+                        email: '',
+                        password: '',
+                    })
+                    toast.success("Login Successful");
+                    console.log('User logged in:', users.user);
+                    if (user.role === "user") {
+                        navigate('/Home');
+                    }
+                });
+                return () => data;
             }
-            else {
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    console.log('User logged in:', userCredential.user);
-                    navigate('/Home');
-                    // Redirect or perform other actions after successful login
-                } catch (error) {
-                    setfirstmsg("Login not found");
-                    setalert(true);
-                    SetEmail("");
-                    SetPassword("");
-                    return;
-                }
+            catch (error) {
+                console.log("error", error)
             }
+        } catch (error) {
+            toast.error("Login not found");
+            setlogin({
+                email: "",
+                password: ""
+            })
         }
-    };
+    }
 
     return (
         <>
@@ -169,20 +129,21 @@ const Login = ({ setshowregister }) => {
                     <Styledlogo src={logo} alt='SiteLogo' />
                 </div>
                 <h3>Welcome back!</h3>
-                <label>Email</label>
-                <input type='email' placeholder='Enter your Email' value={email} onChange={(e) => SetEmail(e.target.value)} id='email' required />
-                <label>Password</label>
-                <input type='password' placeholder='Enter your Password' value={password} onChange={(e) => SetPassword(e.target.value)} id='password' required />
-                <button onClick={handleLogin}>Login</button>
+                <form onSubmit={handleLogin}>
+                    <div className="mb-0" style={{ flexDirection: "column" }}>
+                        <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
+                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder='Email' required value={login.email} onChange={(e) => setlogin({ ...login, email: e.target.value })} />
+                    </div>
+                    <div className="mb-0" style={{ flexDirection: "column" }}>
+                        <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+                        <input type="password" className="form-control" id="exampleInputPassword1" placeholder='Password' required value={login.password} onChange={(e) => setlogin({ ...login, password: e.target.value })} />
+                        <button type='submit' >Login</button>
+                    </div>
+                </form>
                 <div className="register">
                     <h5>Don't have an account</h5>
                     <NavLink to="/Register" onClick={() => setshowregister(true)} >Register</NavLink>
                 </div>
-                {alert && (
-                    <div id='firstmsg'>
-                        {firstmsg}
-                    </div>
-                )}
             </Styledloginpanel>
         </>
     )

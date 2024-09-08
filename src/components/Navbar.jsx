@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import logo from './images/logo.png';
 import styled from 'styled-components';
 import { PiShoppingCartLight } from "react-icons/pi";
 import { FaBars } from "react-icons/fa6";
 import { NavLink, useNavigate } from 'react-router-dom';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
+import toast from 'react-hot-toast';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -139,30 +138,16 @@ const Styledbars = styled.a`
 
 const Navbar = ({ setshowlogin }) => {
 
-    const [user, setuser] = useState(null);
+    // const user = JSON.parse(localStorage.getItem('users'));
+    const user = localStorage.getItem('users');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const activeuser = onAuthStateChanged(auth, (currentuser) => {
-            if (currentuser) {
-                setuser(currentuser);
-            }
-            else {
-                setuser(null);
-            }
-        });
-        return () => activeuser();
-    }, [])
-
-    const handlelogout = async () => {
-        try {
-            await signOut(auth);
-            navigate("/");
-        } catch (error) {
-            console.log("error", error);
-        }
+    const logout = () => {
+        localStorage.clear('users');
+        toast.success("Logout Successfult");
+        navigate('/Home');
+        console.log("logout", user);
     }
-
 
     const mobilemenu = () => {
         let sideopen = document.getElementById("menuopen");
@@ -197,7 +182,7 @@ const Navbar = ({ setshowlogin }) => {
                         <span className="badge badge-danger">0</span>
                     </div>
                     {user ? (
-                        <NavLink onClick={handlelogout} id='logout'>LogOut</NavLink>
+                        <NavLink onClick={logout} id='logout'>LogOut</NavLink>
                     ) : (
                         <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
                     )}
