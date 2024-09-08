@@ -187,7 +187,7 @@ const Navbar = ({ setshowlogin }) => {
                     <ul id='menuopen'>
                         <NavLink to="/Home">Home</NavLink>
                         <NavLink to='/shop'>Shop</NavLink>
-                        <a href='#'>About</a>
+                        <NavLink to="/about">About</NavLink>
                         <NavLink to="/Login" onClick={() => setshowlogin(true)}>Login</NavLink>
                     </ul>
                 </div>

@@ -10,6 +10,7 @@ import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import Checkout from './components/Checkout';
 import Cart from './components/Cart';
+import About from './components/About';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -35,6 +36,7 @@ const App = () => {
           <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
           <Route path='/checkout' element={<><Navbar setshowlogin={setshowlogin} /><Checkout /><Footer /></>} />
           <Route path='/Cart' element={<><Navbar setshowlogin={setshowlogin} /><Cart /><Footer /></>} />
+          <Route path='/about' element={<><Navbar setshowlogin={setshowlogin} /><About /><Footer /></>} />
         </Routes>
       </Styledpage>
     </>
