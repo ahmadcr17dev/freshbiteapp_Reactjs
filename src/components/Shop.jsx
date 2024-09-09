@@ -198,7 +198,7 @@ const Shop = () => {
                                     {allproducts.map((product) => (
                                         <div className='col-md-3 mb-3 col-6 mx-0' key={product.id} >
                                             <div className="card">
-                                                <img src={product.imageurl} className="card-img-top" alt='Ahmad' />
+                                                <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
                                                 <div className="card-body">
                                                     <p className="card-text" id='category'>{product.category}</p>
                                                     <h5 className="card-title" id='name'>{product.name}</h5>
