@@ -1,61 +1,37 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-
-const Styledsection = styled.section`
-    font-family: "poppins", sans-serif;
-    display: block;
-    margin: 5rem auto 5rem auto;
-    border: 0px solid #898989;
-    border-radius: 1rem;
-    width: 85%;
-    #mycart {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        background-color: #898989;
-        color: white;
-        padding: .5rem 1rem 0rem 1rem;
-    }
-`;
+// src/components/Cart.jsx
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { deletefromcart } from '../redux/CartSlice';
 
 const Cart = () => {
 
-    const [product, setproduct] = useState('');
-    const [price, setprice] = useState(0);
+    const dispatch = useDispatch();
+    const cartitems = useSelector(state => state.cart.items);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            const fetchs = async () => {
-                try {
-                    const productname = localStorage.getItem('cart');
-                    if (productname) {
-                        setproduct(productname);
-                    }
-                } catch (error) {
-                    alert("error");
-                }
-            }
-            fetchs();
-        }, 1500);
-        return () => clearTimeout(timer);
-    }, []);
+    const handleRemove = (name) => {
+        dispatch(deletefromcart(name));
+    };
 
     return (
-        <>
-            <Styledsection>
-                <div id="mycart">
-                    <p>Product</p>
-                    <p>Price</p>
-                    <p>Quantity</p>
-                    <p>SubTotal</p>
-                    <p>Remove</p>
-                </div>
-                <div>
-                    {product.name}
-                </div>
-
-            </Styledsection>
-        </>
+        <div>
+            <h1>Cart Page</h1>
+            <div>
+                {cartitems.length === 0 ? (
+                    <p>Your cart is empty.</p>
+                ) : (
+                    <div>
+                        {cartitems.map((item) => (
+                            <div>
+                                <h2>{item.name}</h2>
+                                <p>{item.price}</p>
+                                <button onClick={() => handleRemove(item)}>Remove</button>
+                            </div>
+                        ))}
+                        {/* <button onClick={handleClearCart}>Clear Cart</button> */}
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

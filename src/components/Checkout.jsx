@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { database } from "../firebase";
+import { database } from "../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { MoonLoader } from "react-spinners";
 

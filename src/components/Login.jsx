@@ -3,7 +3,7 @@ import logo from './images/logo.png';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, database } from '../firebase';
+import { auth, database } from '../firebase/firebase';
 import toast from 'react-hot-toast';
 import { collection, onSnapshot, QuerySnapshot, where, query } from 'firebase/firestore';
 
@@ -16,7 +16,7 @@ const Styledloginpanel = styled.div`
     display: flex;
     flex-direction: column;
     width: 300px;
-    margin: 1.7rem auto 3rem auto;
+    margin: 5rem auto 3rem auto;
     border: 1px solid #696969;
     padding: 1rem;
     border-radius: 10px;
@@ -77,7 +77,7 @@ const Styledloginpanel = styled.div`
     }
 `;
 
-const Login = ({ setshowregister }) => {
+const Login = () => {
 
     const [login, setlogin] = useState({
         email: "",
@@ -142,7 +142,7 @@ const Login = ({ setshowregister }) => {
                 </form>
                 <div className="register">
                     <h5>Don't have an account</h5>
-                    <NavLink to="/Register" onClick={() => setshowregister(true)} >Register</NavLink>
+                    <NavLink to="/Register">Register</NavLink>
                 </div>
             </Styledloginpanel>
         </>

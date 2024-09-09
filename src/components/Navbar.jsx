@@ -136,7 +136,7 @@ const Styledbars = styled.a`
     }
 `;
 
-const Navbar = ({ setshowlogin }) => {
+const Navbar = () => {
 
     // const user = JSON.parse(localStorage.getItem('users'));
     const user = localStorage.getItem('users');
@@ -173,7 +173,7 @@ const Navbar = ({ setshowlogin }) => {
                         <NavLink to="/Home">Home</NavLink>
                         <NavLink to='/shop'>Shop</NavLink>
                         <NavLink to="/about">About</NavLink>
-                        <NavLink to="/Login" onClick={() => setshowlogin(true)}>Login</NavLink>
+                        {/* <NavLink to="/Login" onClick={() => setshowlogin(true)}>Login</NavLink> */}
                     </ul>
                 </div>
                 <div>
@@ -184,7 +184,7 @@ const Navbar = ({ setshowlogin }) => {
                     {user ? (
                         <NavLink onClick={logout} id='logout'>LogOut</NavLink>
                     ) : (
-                        <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
+                        <NavLink to="/Login" >Login</NavLink>
                     )}
                     <Styledbars href='#'>{<FaBars size={"1.7rem"} onClick={mobilemenu} />}</Styledbars>
                 </div>

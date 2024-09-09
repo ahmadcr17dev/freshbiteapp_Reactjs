@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { database } from '../firebase';
+import { database } from '../firebase/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const Styledsection = styled.section`

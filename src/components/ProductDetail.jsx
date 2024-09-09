@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { getDocs, collection } from 'firebase/firestore';
-import { database } from '../firebase';
+import { database } from '../firebase/firebase';
 import { MoonLoader } from 'react-spinners';
 import { NavLink } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
+import { addtocart } from '../redux/CartSlice';
+import MyContext from '../context/MyContext';
 
 const Styledsection = styled.section`
     background-color: white;
@@ -69,13 +73,13 @@ const Styledsection = styled.section`
         }
     }
     #addtocart {
-        width: 13rem;
+        width: 19rem;
         font-size: 1.1rem;
         padding: .5rem 1.9rem .5rem 1.9rem;
         font-weight: 470;
     }
     #placeorder {
-        width: 20.77rem;
+        width: 19rem;
         font-size: 1.1rem;
         font-weight: 490;
         padding: .5rem 1.9rem .5rem 1.9rem; 
@@ -107,8 +111,6 @@ const ProductDetail = () => {
     const [ship, setship] = useState(shipping);
     const productname = localStorage.getItem('dozen') || 1;
     const [dozen, setdozen] = useState(productname);
-    const [alert, setalert] = useState(true);
-    const [msg, setmsg] = useState('');
 
     useEffect(() => {
         const delay = setTimeout(() => {
@@ -140,15 +142,15 @@ const ProductDetail = () => {
         return () => clearTimeout(delay);
     }, [])
 
-    const handleincrement = async () => {
-        setnumber(number + 1);
-        setPrice(prevPrice => (parseFloat(prevPrice) + initialPrice).toFixed(2));
-    }
+    // const handleincrement = async () => {
+    //     setnumber(number + 1);
+    //     setPrice(prevPrice => (parseFloat(prevPrice) + initialPrice).toFixed(2));
+    // }
 
-    const handledecrement = () => {
-        setnumber(number - 1);
-        setPrice(prevPrice => (parseFloat(prevPrice) - initialPrice).toFixed(2));
-    }
+    // const handledecrement = () => {
+    //     setnumber(number - 1);
+    //     setPrice(prevPrice => (parseFloat(prevPrice) - initialPrice).toFixed(2));
+    // }
 
     useEffect(() => {
         localStorage.setItem("price", price);
@@ -158,14 +160,18 @@ const ProductDetail = () => {
         setdozen((number + 1) - 1);
     }, [price, ship, dozen]);
 
-    useEffect(() => {
-        if (alert) {
-            const timer = setTimeout(() => {
-                setalert(false);
-            }, 3000);
-            return () => clearTimeout(timer);
-        };
-    }, [alert]);
+    const dispatch = useDispatch();
+    const cartitems = useSelector((state) => state.cart);
+
+    const handleaddcart = (item) => {
+        const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
+        if (!isProductInCart) {
+            dispatch(addtocart(item));
+            toast.success(`${item.name} is added to the cart`);
+        } else {
+            toast.error(`${item.name} is already in the cart`);
+        }
+    }
 
     return (
         <>
@@ -175,38 +181,36 @@ const ProductDetail = () => {
                 <Styledsection>
                     <div>
                         {
-                            product.map((product) => (
-                                <div key={product.id} id='product-detail'>
-                                    <div>
-                                        <img src={product.imageurl} alt="Product" />
-                                    </div>
-                                    <div id='product-info'>
-                                        <p id='category'>{product.category} / {product.name}</p>
-                                        <h3 id='name'>{product.name}</h3>
-                                        <p id='description'>{product.description}</p>
-                                        <p id='stock'>stock: {product.stock}</p>
-                                        {product.quantity && <p id='quantity'>Quantity: {product.quantity} kg</p>}
-                                        {product.bunch && <p id='bunch'>Bunch: {product.bunch}</p>}
-                                        {product.size && <p id='size'>size: {product.size}</p>}
-                                        {product.dozen && <p id='dozen'>Dozen: {product.dozen}</p>}
-                                        <p id='price'>${price}</p>
-                                        <div id='plusminus'>
-                                            <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
-                                            <input type='text' value={number} readOnly />
-                                            <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button>
-                                            <button className='btn btn-success' id='addtocart'> Add to cart</button>
-                                        </div>
+                            product.map((product, index) => {
+                                // const {category,name,imageurl,stock,price,quantity,dozen,size,bunch,description} = product;
+                                return (
+                                    <div key={index} id='product-detail'>
                                         <div>
-                                            <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
+                                            <img src={product.imageurl} alt="Product" />
                                         </div>
-                                        {alert && (
-                                            <div id='msg'>
-                                                {msg}
+                                        <div id='product-info'>
+                                            <p id='category'>{product.category} / {product.name}</p>
+                                            <h3 id='name'>{product.name}</h3>
+                                            <p id='description'>{product.description}</p>
+                                            <p id='stock'>stock: {product.stock}</p>
+                                            {product.quantity && <p id='quantity'>Quantity: {product.quantity} kg</p>}
+                                            {product.bunch && <p id='bunch'>Bunch: {product.bunch}</p>}
+                                            {product.size && <p id='size'>size: {product.size}</p>}
+                                            {product.dozen && <p id='dozen'>Dozen: {product.dozen}</p>}
+                                            <p id='price'>${price}</p>
+                                            <div id='plusminus'>
+                                                {/* <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
+                                                <input type='text' value={number} readOnly />
+                                                <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button> */}
+                                                <button className='btn btn-success' id='addtocart' onClick={() => handleaddcart(product)}> Add to cart</button>
                                             </div>
-                                        )}
+                                            <div>
+                                                <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                )
+                            })
                         }
                     </div>
                 </Styledsection>

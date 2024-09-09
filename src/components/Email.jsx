@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
-import { database } from "../firebase";
+import { database } from "../firebase/firebase";
 
 const Styledsection = styled.section`
     display: flex;

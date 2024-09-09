@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -11,8 +11,8 @@ import styled from 'styled-components';
 import Checkout from './components/Checkout';
 import Cart from './components/Cart';
 import About from './components/About';
-import MyState from './components/context/mystate';
 import { Toaster } from 'react-hot-toast';
+import MyState from './context/MyState';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -23,23 +23,20 @@ const Styledpage = styled.div`
 
 const App = () => {
 
-  const [showlogin, setshowlogin] = useState(false);
-  const [showregister, setshowregister] = useState(false);
-
   return (
     <>
       <MyState>
         <Styledpage>
           <Routes>
-            <Route path='/' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
-            <Route path='/Home' element={<><Navbar setshowlogin={setshowlogin} /><Home /><Footer /></>} />
-            <Route path='/Login' element={(showlogin ? <Login setshowlogin={setshowlogin} setshowregister={setshowregister} /> : <></>)} />
-            <Route path='/Register' element={showregister ? <Register setshowregister={setshowregister} setshowlogin={setshowlogin} /> : <></>} />
-            <Route path='/shop' element={<><Navbar setshowlogin={setshowlogin} /><Shop /><Footer /></>} />
-            <Route path='/ProductDetail' element={<><Navbar setshowlogin={setshowlogin} /><ProductDetail /><Footer /></>} />
-            <Route path='/checkout' element={<><Navbar setshowlogin={setshowlogin} /><Checkout /><Footer /></>} />
-            <Route path='/Cart' element={<><Navbar setshowlogin={setshowlogin} /><Cart /><Footer /></>} />
-            <Route path='/about' element={<><Navbar setshowlogin={setshowlogin} /><About /><Footer /></>} />
+            <Route path='/' element={<Home />} />
+            <Route path='/Home' element={<Home />} />
+            <Route path='/Login' element={<Login />} />
+            <Route path='/Register' element={<Register />} />
+            <Route path='/shop' element={<Shop />} />
+            <Route path='/ProductDetail' element={<><Navbar /><ProductDetail /><Footer /></>} />
+            <Route path='/checkout' element={<><Navbar /><Checkout /><Footer /></>} />
+            <Route path='/Cart' element={<><Navbar /><Cart /><Footer /></>} />
+            <Route path='/About' element={<><Navbar /><About /><Footer /></>} />
           </Routes>
           <Toaster />
         </Styledpage>

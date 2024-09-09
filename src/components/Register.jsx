@@ -3,7 +3,7 @@ import logo from './images/logo.png';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth, database, provider } from '../firebase';
+import { auth, database, provider } from '../firebase/firebase';
 import { FcGoogle } from "react-icons/fc";
 import toast from 'react-hot-toast';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
@@ -93,7 +93,7 @@ const Styledloginpanel = styled.div`
     }
 `;
 
-const Register = ({ setshowlogin }) => {
+const Register = () => {
 
     const [register, setregister] = useState({
         name: "",
@@ -189,7 +189,7 @@ const Register = ({ setshowlogin }) => {
                 </form>
                 <div className="register">
                     <h5>Already have an account</h5>
-                    <NavLink to="/Login" onClick={() => setshowlogin(true)} >Login</NavLink>
+                    <NavLink to="/Login">Login</NavLink>
                 </div>
                 <div>
                     <button className='container' id='googlebutton' onClick={googleregister} ><FcGoogle size={"1.1rem"} id='googleicon' />Continue with Google</button>
