@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { database } from '../firebase/firebase';
-import { collection, getDocs, setDoc, doc, deleteDoc, query } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
@@ -10,7 +10,7 @@ import { IoMdHeart } from 'react-icons/io';
 import Layout from './Layout';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { addtocart } from '../redux/CartSlice';
+import { addtocart, productdetail } from '../redux/CartSlice';
 
 const Styledsection = styled.section`
     margin: 10rem 2rem 5rem 2rem;
@@ -129,45 +129,6 @@ const Shop = () => {
         fetchproducts();
     }, [])
 
-    const buynow = async (product) => {
-        try {
-            const q = query(collection(database, 'productdetails'));
-            const querysnap = await getDocs(q);
-            querysnap.forEach(async (doc) => {
-                await deleteDoc(doc.ref);
-            })
-
-            const productdata = {
-                name: product.name,
-                price: product.price,
-                imageurl: product.imageurl,
-                stock: product.stock,
-                category: product.category,
-                description: product.description,
-            }
-            if (product.quantity) {
-                productdata.quantity = product.quantity;
-            }
-            if (product.bunch) {
-                productdata.bunch = product.bunch;
-            }
-            if (product.dozen) {
-                productdata.dozen = product.dozen;
-            }
-            if (product.size) {
-                productdata.size = product.size;
-            }
-            await setDoc(doc(database, "productdetails", product.id), productdata);
-        }
-        catch (e) {
-            toast.error("Error Occured");
-        }
-    };
-
-    const handlebuynow = async (product) => {
-        await buynow(product);
-    };
-
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
 
@@ -179,6 +140,10 @@ const Shop = () => {
         } else {
             toast.error(`${item.name} is already in the cart`);
         }
+    }
+
+    const handledetail = (item) => {
+        dispatch(productdetail(item));
     }
 
     return (
@@ -204,12 +169,12 @@ const Shop = () => {
                                                     <h5 className="card-title" id='name'>{product.name}</h5>
                                                     <p className="card-text" id='price'>${product.price}</p>
                                                     <p className='card-text' id='stock'>Stock: {product.stock}</p>
-                                                    {product.quantity && <p className='card-text' id='quantity'>Quantity: {product.quantity}kg</p>}
+                                                    {product.weigh && <p className='card-text' id='quantity'>Quantity: {product.weigh}kg</p>}
                                                     {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
                                                     {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
                                                     {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
                                                     <div id='icons'>
-                                                        <NavLink className='icons' to={'/ProductDetail'} onClick={() => handlebuynow(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
+                                                        <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
                                                         <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
                                                         <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} /></NavLink>
                                                     </div>

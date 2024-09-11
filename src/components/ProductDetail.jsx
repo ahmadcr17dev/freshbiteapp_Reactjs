@@ -1,13 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
-import { getDocs, collection } from 'firebase/firestore';
-import { database } from '../firebase/firebase';
 import { MoonLoader } from 'react-spinners';
 import { NavLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
 import { addtocart } from '../redux/CartSlice';
-import MyContext from '../context/MyContext';
 
 const Styledsection = styled.section`
     background-color: white;
@@ -101,67 +98,28 @@ const Styledsection = styled.section`
 
 const ProductDetail = () => {
 
-    const [product, setproduct] = useState([]);
     const [loading, setloading] = useState(true);
-    const [number, setnumber] = useState(1);
-    const [initialPrice, setInitialPrice] = useState(0);
-    const price1 = parseFloat(localStorage.getItem('price')) || product.price;
-    const [price, setPrice] = useState(price1);
-    const shipping = parseFloat(localStorage.getItem('ship')) || 3.00;
-    const [ship, setship] = useState(shipping);
-    const productname = localStorage.getItem('dozen') || 1;
-    const [dozen, setdozen] = useState(productname);
+    const [product, setproduct] = useState(null);
+    const dispatch = useDispatch();
+    const cartitems = useSelector((state) => state.cart);
 
     useEffect(() => {
         const delay = setTimeout(() => {
             const fetchproducts = async () => {
-                try {
-                    const allproductscollection = collection(database, 'productdetails');
-                    const allproductssnapshot = await getDocs(allproductscollection);
-                    const allproductslist = allproductssnapshot.docs.map((doc) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                    setproduct(allproductslist);
+                if(selectedproduct) {
+                    setproduct(selectedproduct);
                     setloading(false);
-                    localStorage.setItem('productname', allproductslist[0].name);
-                }
-                catch (error) {
-                    setloading(true);
-                }
-                const pricescollection = collection(database, 'productdetails');
-                const pricesnapshot = await getDocs(pricescollection);
-                if (!pricesnapshot.empty) {
-                    const pricedata = pricesnapshot.docs[0].data();
-                    setInitialPrice(pricedata.price);
-                    setPrice(pricedata.price);
+                } else {
+                    const localstorage = localStorage.getItem('selectedproduct');
+                    if(localstorage) {
+                        setproduct(JSON.parse(localstorage));
+                    }
                 }
             };
             fetchproducts();
         }, 4000)
         return () => clearTimeout(delay);
-    }, [])
-
-    // const handleincrement = async () => {
-    //     setnumber(number + 1);
-    //     setPrice(prevPrice => (parseFloat(prevPrice) + initialPrice).toFixed(2));
-    // }
-
-    // const handledecrement = () => {
-    //     setnumber(number - 1);
-    //     setPrice(prevPrice => (parseFloat(prevPrice) - initialPrice).toFixed(2));
-    // }
-
-    useEffect(() => {
-        localStorage.setItem("price", price);
-        localStorage.setItem("ship", ship);
-        setship(setPrice + 3);
-        localStorage.setItem("dozen", dozen);
-        setdozen((number + 1) - 1);
-    }, [price, ship, dozen]);
-
-    const dispatch = useDispatch();
-    const cartitems = useSelector((state) => state.cart);
+    }, [selectedproduct])
 
     const handleaddcart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
@@ -180,38 +138,28 @@ const ProductDetail = () => {
             ) : (
                 <Styledsection>
                     <div>
-                        {
-                            product.map((product, index) => {
-                                // const {category,name,imageurl,stock,price,quantity,dozen,size,bunch,description} = product;
-                                return (
-                                    <div key={index} id='product-detail'>
-                                        <div>
-                                            <img src={product.imageurl} alt="Product" />
-                                        </div>
-                                        <div id='product-info'>
-                                            <p id='category'>{product.category} / {product.name}</p>
-                                            <h3 id='name'>{product.name}</h3>
-                                            <p id='description'>{product.description}</p>
-                                            <p id='stock'>stock: {product.stock}</p>
-                                            {product.quantity && <p id='quantity'>Quantity: {product.quantity} kg</p>}
-                                            {product.bunch && <p id='bunch'>Bunch: {product.bunch}</p>}
-                                            {product.size && <p id='size'>size: {product.size}</p>}
-                                            {product.dozen && <p id='dozen'>Dozen: {product.dozen}</p>}
-                                            <p id='price'>${price}</p>
-                                            <div id='plusminus'>
-                                                {/* <button className='btn btn-danger' onClick={handledecrement} disabled={number <= 1}>-</button>
-                                                <input type='text' value={number} readOnly />
-                                                <button className='btn btn-danger' onClick={handleincrement} disabled={number >= product.stock}>+</button> */}
-                                                <button className='btn btn-success' id='addtocart' onClick={() => handleaddcart(product)}> Add to cart</button>
-                                            </div>
-                                            <div>
-                                                <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                        }
+                        <div id='product-detail'>
+                            <div>
+                                <img src={product.imageurl} alt="Product" />
+                            </div>
+                            <div id='product-info'>
+                                <p id='category'>{product.category} / {product.name}</p>
+                                <h3 id='name'>{product.name}</h3>
+                                <p id='description'>{product.description}</p>
+                                <p id='stock'>stock: {product.stock}</p>
+                                {product.weigh && <p id='quantity'>Weight: {product.weigh} kg</p>}
+                                {product.bunch && <p id='bunch'>Bunch: {product.bunch}</p>}
+                                {product.size && <p id='size'>size: {product.size}</p>}
+                                {product.dozen && <p id='dozen'>Dozen: {product.dozen}</p>}
+                                <p id='price'>${product.price}</p>
+                                <div id='plusminus'>
+                                    <button className='btn btn-success' id='addtocart' onClick={() => handleaddcart(product)}> Add to cart</button>
+                                </div>
+                                <div>
+                                    <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </Styledsection>
             )};

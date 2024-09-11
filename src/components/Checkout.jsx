@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { database } from "../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { MoonLoader } from "react-spinners";
+import { useDispatch, useSelector } from "react-redux";
 
 const Styledsection = styled.section`
     font-family: "poppins", sans-serif;
@@ -95,9 +96,8 @@ const Styledsection = styled.section`
 
 const Checkout = () => {
 
-    const [products, setproducts] = useState('');
     const [loading, setloading] = useState(true);
-    const [name, setname] = useState('');
+    const [fullname, setfullname] = useState("");
     const [house, sethouse] = useState('');
     const [street, setstreet] = useState('');
     const [zip, setzip] = useState('');
@@ -107,9 +107,9 @@ const Checkout = () => {
     const [cities, setCities] = useState([]);
     const [payment, setpayment] = useState('');
     const [city, setcity] = useState('');
-    const [storedprice, setstoredprice] = useState(0);
-    const [shipping, setshipping] = useState(3);
-    const [dozen, setdozen] = useState(1);
+    const [product, setproduct] = useState(null);
+    const singlecheckout = useSelector((state) => state.cart.singlecheckout);
+    const dispatch = useDispatch();
 
     const data = {
         "Islamabad": ["Islamabad"],
@@ -127,37 +127,19 @@ const Checkout = () => {
         setCities(data[state] || []);
     };
 
-
     useEffect(() => {
         const timer = setTimeout(() => {
-            const fetchs = async () => {
-                try {
-                    const price = parseFloat(localStorage.getItem('price')) || 0;
-                    setstoredprice(price);
-                    const ship = parseFloat(localStorage.getItem('ship')) || 3;
-                    setshipping(parseFloat(ship + price).toFixed(2));
-                    const storedname = localStorage.getItem('productname');
-                    if (storedname) {
-                        setproducts(storedname);
-                    }
-                    const dozen = parseFloat(localStorage.getItem('dozen')) || 1;
-                    setdozen(dozen);
-                    setloading(false);
-                } catch (error) {
-                    setloading(true);
-                }
-            }
-            fetchs();
+            setloading(false);
         }, 1500);
         return () => clearTimeout(timer);
-    }, []);
+    }, [singlecheckout]);
 
     const confirmorder = async (e) => {
         e.preventDefault();
         try {
             const billingdoc = collection(database, 'billinginfo');
             await addDoc(billingdoc, {
-                fname: name,
+                fname: fullname,
                 house: house,
                 street: street,
                 state: selectedState,
@@ -182,19 +164,19 @@ const Checkout = () => {
                         <div id="formcontent" className="row g-3">
                             <h1>Billing Information</h1>
                             <div className="col-md-12">
-                                <label for="firstname" className="form-label">Full Name</label>
-                                <input type="text" className="form-control" placeholder="first name" value={name} onChange={(e) => setname(e.target.value)} required />
+                                <label htmlFor="firstname" className="form-label">Full Name</label>
+                                <input type="text" className="form-control" placeholder="first name" value={fullname} onChange={(e) => setfullname(e.target.value)} required />
                             </div>
                             <div className="col-12">
-                                <label for="address1" className="form-label">Enter House No.</label>
+                                <label htmlFor="address1" className="form-label">Enter House No.</label>
                                 <input type="text" className="form-control" placeholder="Enter your house no." required value={house} onChange={(e) => sethouse(e.target.value)} />
                             </div>
                             <div className="col-12">
-                                <label for="address2" className="form-label">Enter street address</label>
+                                <label htmlFor="address2" className="form-label">Enter street address</label>
                                 <input type="text" className="form-control" placeholder="Enter street address" required value={street} onChange={(e) => setstreet(e.target.value)} />
                             </div>
                             <div className="col-md-4">
-                                <label for="inputState" className="form-label">State</label>
+                                <label htmlFor="inputState" className="form-label">State</label>
                                 <select onChange={handleStateChange} value={selectedState} required>
                                     <option value="">Select a state</option>
                                     {Object.keys(data).map((state) => (
@@ -220,27 +202,27 @@ const Checkout = () => {
                                 </select>
                             </div>
                             <div className="col-md-4">
-                                <label for="inputZip" className="form-label">Zip</label>
+                                <label htmlFor="inputZip" className="form-label">Zip</label>
                                 <input type="text" className="form-control" placeholder="zip code" required value={zip} onChange={(e) => setzip(e.target.value)} />
                             </div>
                             <div className="col-md-4">
-                                <label for="inputcell" className="form-label">Phone</label>
+                                <label htmlFor="inputcell" className="form-label">Phone</label>
                                 <input type="cell" className="form-control" placeholder="phone" required value={phone} onChange={(e) => setphone(e.target.value)} />
                             </div>
                             <div className="col-md-4">
-                                <label for="inputemail" className="form-label">Email</label>
+                                <label htmlFor="inputemail" className="form-label">Email</label>
                                 <input type="email" className="form-control" placeholder="email address" required value={email} onChange={(e) => setemail(e.target.value)} />
                             </div>
                         </div>
                         <div id="myorder">
                             <h5>Your Order</h5>
                             <div id="price">
-                                <p>{products} <br /> <p style={{ fontWeight: "400", fontSize: "0.8rem" }}>Quantity: {dozen}</p> </p>
-                                <p>${storedprice}</p>
+                                <p><br /> <p style={{ fontWeight: "400", fontSize: "0.8rem" }}>Quantity: </p> </p>
+                                <p>$</p>
                             </div>
                             <div id="subtotal">
                                 <p>SubTotal</p>
-                                <p style={{ color: "red" }}>${storedprice}</p>
+                                <p style={{ color: "red" }}></p>
                             </div>
                             <div id="subtotal">
                                 <p>Shipping</p>
@@ -249,7 +231,7 @@ const Checkout = () => {
                             <hr />
                             <div id="total">
                                 <p>Total</p>
-                                <p style={{ color: "red" }}>${shipping}</p>
+                                <p style={{ color: "red" }}>$</p>
                             </div>
                             <hr />
                             <h6>Payment Methods</h6>

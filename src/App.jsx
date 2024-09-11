@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -13,6 +13,8 @@ import Cart from './components/Cart';
 import About from './components/About';
 import { Toaster } from 'react-hot-toast';
 import MyState from './context/MyState';
+import { useDispatch } from 'react-redux';
+import { initializeCart } from './redux/CartSlice';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -22,6 +24,12 @@ const Styledpage = styled.div`
 `;
 
 const App = () => {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(initializeCart());
+  }, [dispatch])
 
   return (
     <>

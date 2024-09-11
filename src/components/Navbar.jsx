@@ -5,6 +5,7 @@ import { PiShoppingCartLight } from "react-icons/pi";
 import { FaBars } from "react-icons/fa6";
 import { NavLink, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -138,9 +139,10 @@ const Styledbars = styled.a`
 
 const Navbar = () => {
 
-    // const user = JSON.parse(localStorage.getItem('users'));
     const user = localStorage.getItem('users');
     const navigate = useNavigate();
+    const cartcount = useSelector((state) => state.cart.items.length);
+
 
     const logout = () => {
         localStorage.clear('users');
@@ -179,7 +181,9 @@ const Navbar = () => {
                 <div>
                     <div>
                         <NavLink to='/Cart'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</NavLink>
-                        <span className="badge badge-danger">0</span>
+                        {cartcount >= 0 && (
+                            <span className="badge badge-danger">{cartcount}</span>
+                        )}
                     </div>
                     {user ? (
                         <NavLink onClick={logout} id='logout'>LogOut</NavLink>
