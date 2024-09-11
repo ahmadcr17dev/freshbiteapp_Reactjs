@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { MoonLoader } from 'react-spinners';
-import { NavLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
 import { addtocart } from '../redux/CartSlice';
@@ -102,23 +101,29 @@ const ProductDetail = () => {
     const [product, setproduct] = useState(null);
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
+    const selectedproduct = useSelector((state) => state.cart.selectedproduct);
 
     useEffect(() => {
-        const delay = setTimeout(() => {
-            const fetchproducts = async () => {
-                if(selectedproduct) {
-                    setproduct(selectedproduct);
-                    setloading(false);
-                } else {
-                    const localstorage = localStorage.getItem('selectedproduct');
-                    if(localstorage) {
-                        setproduct(JSON.parse(localstorage));
+        const timer = setTimeout(() => {
+            const fetchproduct = async () => {
+                try {
+                    if (product) {
+                        setproduct(selectedproduct);
+                        setloading(false);
+                    } else {
+                        const storedproduct = localStorage.getItem('selectedproduct');
+                        if (storedproduct) {
+                            setproduct(JSON.parse(storedproduct));
+                            setloading(false);
+                        }
                     }
+                } catch (error) {
+                    console.log("Error in loading: ", error);
                 }
-            };
-            fetchproducts();
-        }, 4000)
-        return () => clearTimeout(delay);
+            }
+            fetchproduct();
+        }, 1500)
+        return () => clearTimeout(timer);
     }, [selectedproduct])
 
     const handleaddcart = (item) => {
@@ -154,9 +159,6 @@ const ProductDetail = () => {
                                 <p id='price'>${product.price}</p>
                                 <div id='plusminus'>
                                     <button className='btn btn-success' id='addtocart' onClick={() => handleaddcart(product)}> Add to cart</button>
-                                </div>
-                                <div>
-                                    <NavLink to='/checkout' className='btn btn-danger' id='placeorder'>Place an Order</NavLink>
                                 </div>
                             </div>
                         </div>

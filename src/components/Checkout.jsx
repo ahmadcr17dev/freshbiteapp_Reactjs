@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { database } from "../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { MoonLoader } from "react-spinners";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { totalquantity, selectCartSubtotal } from "../redux/CartSlice";
 
 const Styledsection = styled.section`
     font-family: "poppins", sans-serif;
@@ -107,9 +108,8 @@ const Checkout = () => {
     const [cities, setCities] = useState([]);
     const [payment, setpayment] = useState('');
     const [city, setcity] = useState('');
-    const [product, setproduct] = useState(null);
-    const singlecheckout = useSelector((state) => state.cart.singlecheckout);
-    const dispatch = useDispatch();
+    const totalitems = useSelector(totalquantity);
+    const totalprice = useSelector(selectCartSubtotal);
 
     const data = {
         "Islamabad": ["Islamabad"],
@@ -129,10 +129,18 @@ const Checkout = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setloading(false);
+            const fetchs = async () => {
+                try {
+                    setloading(false);
+                }
+                catch (error) {
+                    console.log("Error is:", error);
+                }
+            };
+            fetchs();
         }, 1500);
         return () => clearTimeout(timer);
-    }, [singlecheckout]);
+    }, []);
 
     const confirmorder = async (e) => {
         e.preventDefault();
@@ -217,21 +225,21 @@ const Checkout = () => {
                         <div id="myorder">
                             <h5>Your Order</h5>
                             <div id="price">
-                                <p><br /> <p style={{ fontWeight: "400", fontSize: "0.8rem" }}>Quantity: </p> </p>
-                                <p>$</p>
+                                <p>Total Items</p>
+                                <p>{totalitems} items</p>
                             </div>
                             <div id="subtotal">
                                 <p>SubTotal</p>
-                                <p style={{ color: "red" }}></p>
+                                <p style={{ color: "black" }}>${parseFloat(totalprice).toFixed(2)}</p>
                             </div>
                             <div id="subtotal">
                                 <p>Shipping</p>
-                                <p style={{ color: "red" }}>$3.00</p>
+                                <p style={{ color: "black" }}>$5.00</p>
                             </div>
                             <hr />
                             <div id="total">
                                 <p>Total</p>
-                                <p style={{ color: "red" }}>$</p>
+                                <p style={{ color: "red" }}>${parseFloat(totalprice + 5).toFixed(2)}</p>
                             </div>
                             <hr />
                             <h6>Payment Methods</h6>

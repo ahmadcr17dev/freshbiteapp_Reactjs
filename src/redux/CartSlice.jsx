@@ -24,6 +24,8 @@ const initialState = {
     items: loadCartFromLocalStorage(),
     counter: 0,
     selectedproduct: loadselectedproduct(),
+    totalitems: 0,
+    totalprice: 0,
 };
 
 const updateLocalStorage = (cartitem) => {
@@ -85,5 +87,5 @@ export const selectCartSubtotal = (state) => {
 export const totalquantity = (state) => {
     return state.cart.items.reduce((total, item) => total + ((item.quantity + 1) - 1), 0);
 };
-export const { addtocart, deletefromcart, increment, decrement, clearcart, initializeCart, productdetail } = CartSlice.actions;
+export const { addtocart, deletefromcart, increment, decrement, clearcart, initializeCart, productdetail, checkout } = CartSlice.actions;
 export default CartSlice.reducer;
