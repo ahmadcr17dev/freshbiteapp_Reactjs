@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { database } from '../firebase/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
@@ -102,6 +102,21 @@ const Styledsection = styled.section`
             padding: auto;
         }
     }
+    #buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        button {
+            border-radius: 100%;
+            border: 0px solid black;
+            background-color: beige;
+            padding: .5rem;
+            margin: 0rem 1rem 0rem 1rem;
+            height: 3.5rem;
+            width: 3.5rem;
+            font-size: 1.5rem;
+        }
+    }
 `;
 
 const Shop = () => {
@@ -109,6 +124,8 @@ const Shop = () => {
     const [allproducts, setallproducts] = useState([]);
     const [search, setsearch] = useState();
     const [loading, setloading] = useState(true);
+    const dispatch = useDispatch();
+    const cartitems = useSelector((state) => state.cart);
 
     useEffect(() => {
         const fetchproducts = async () => {
@@ -128,9 +145,6 @@ const Shop = () => {
         };
         fetchproducts();
     }, [])
-
-    const dispatch = useDispatch();
-    const cartitems = useSelector((state) => state.cart);
 
     const handleaddcart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
@@ -185,7 +199,7 @@ const Shop = () => {
                                 </div>
                             </div>
                             <div id='buttons'>
-                                <button >&laquo;</button>
+                                <button className='btn btn-secondary text-black'>&laquo;</button>
                                 <button >&raquo;</button>
                             </div>
                         </div>

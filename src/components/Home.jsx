@@ -7,6 +7,7 @@ import HomeProducts from "./HomeProducts";
 import { MoonLoader } from "react-spinners";
 import Layout from "./Layout";
 import MyContext from '../context/MyContext';
+import Testimonials from "./Testimonials";
 
 const Home = () => {
 
@@ -32,6 +33,7 @@ const Home = () => {
                     <MidIcons />
                     <HomeMid />
                     <HomeProducts />
+                    <Testimonials />
                     <Email />
                 </Layout>
             )}
