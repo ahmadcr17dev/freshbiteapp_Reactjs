@@ -69,10 +69,14 @@ const Styledsection = styled.section`
         #price {
             position: absolute;
             left: 29%;
+            color: #696969;
+            font-weight: 500;
         }
         #subtotal {
             position: absolute;
             left: 65%;
+            color: #696969;
+            font-weight: 500;
         }
         .quantity {
             margin: 0rem;
@@ -103,6 +107,13 @@ const Styledsection = styled.section`
                 color: red;
                 font-size: 1.4rem;
                 font-weight: 500;
+            }
+        }
+    }
+    @media (max-width: 1300px) and (min-width: 900px) {
+        #items {
+            #price {
+                left: 30%;
             }
         }
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../firebase/firebase";
+import toast from "react-hot-toast";
 
 const Styledsection = styled.section`
     display: flex;
@@ -129,27 +130,15 @@ const Styledsection = styled.section`
 const Email = () => {
 
     const [Email, setEmail] = useState('');
-    const [alert, setalert] = useState(true);
-    const [msg, setmsg] = useState('');
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setalert(false);
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, [alert])
-
 
     const subscribe = async (e) => {
         e.preventDefault();
         if (Email === "") {
-            setalert(true);
-            setmsg('Email is required');
+            toast.error("Email is required");
             return;
         }
         else if ((!Email.includes("@")) || (!Email.endsWith(".com"))) {
-            setalert(true);
-            setmsg('Put a valid email address');
+            toast.error('Put a valid email address');
             return;
         }
         else {
@@ -158,17 +147,14 @@ const Email = () => {
                 const q = query(subscribeRef, where("Email", "==", Email));
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
-                    setalert(true);
-                    setmsg('Already Registered');
+                    toast.error('Already Registered');
                     setEmail('');
                     return;
                 }
                 await addDoc(subscribeRef, { Email: Email });
-                setalert(true);
-                setmsg('Successfully Registered');
+                toast.success('Successfully Registered');
             } catch (error) {
-                setalert(true);
-                setmsg('Failed to Subscribe. Try again');
+                toast.error('Failed to Subscribe. Try again');
                 setEmail('');
             }
         }
@@ -182,11 +168,6 @@ const Email = () => {
                     <input id="email" type="email" placeholder="Enter Your Email Address" required value={Email} onChange={(e) => setEmail(e.target.value)} />
                     <button onClick={subscribe} >Subscribe</button>
                 </div>
-                {alert && (
-                    <div id='firstmsg'>
-                        {msg}
-                    </div>
-                )}
             </Styledsection>
         </>
     );

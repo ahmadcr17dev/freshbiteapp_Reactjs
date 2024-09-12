@@ -93,6 +93,143 @@ const Styledsection = styled.section`
             margin: 3rem 0rem 3rem 0rem;
         }
     }
+    @media (max-width: 1300px) and (min-width: 900px) {
+        #myorder {
+            width: 150%;
+        }
+        #myform {
+            select {
+                width: 5rem;
+            }
+            option {
+                width: 5rem;
+            }
+        }
+    }
+    @media (max-width: 899px) and (min-width: 600px) {
+        #formcontent {
+            h1 {
+                font-size: 1.5rem;
+            }
+            label {
+                font-size: .8rem;
+            }
+            input {
+                font-size: .8rem;
+            }
+            select {
+                font-size: .8rem;
+                margin: 0rem .3rem 0rem 0rem;
+                width: 4rem;
+            }
+            option {
+                width: 4rem;
+            }
+        }
+        #myorder {
+        width: 170%;
+        border: 1px solid #898989;
+        margin: 0rem 0rem 0rem 1rem;
+        padding: 3rem 1rem 1rem 1rem;
+        border-radius: 0.3rem;
+        h5 {
+            font-size: 1.3rem;
+            margin: 0rem 0rem 1rem 0rem;
+        }
+        #price {
+            display: flex;
+            justify-content: space-between;
+        }
+        #price p:nth-child(1) {
+            color: #898989;
+            font-size: .8rem;
+            font-weight: 450;
+        }
+        #price p:nth-child(2) {
+            color: black;
+            font-size: .8rem;
+            font-weight: 500;
+        }
+        #subtotal {
+            display: flex;
+            justify-content: space-between;
+            margin: 0rem 0rem 0rem 0rem;
+            font-size: .8rem;
+            font-weight: 500;
+        }
+        #total {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0rem 0rem 0rem;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+        h6 {
+            font-size: 1.19rem;
+            margin: 1.9rem 0rem 1rem 0rem;
+        }
+        label {
+            font-size: .8rem;
+            margin: 0rem 0rem 0rem .5rem;
+        }
+        input {
+            size: .9rem;
+        }
+        #para {
+            font-size: .7rem;
+            margin: 3rem 0rem 3rem 0rem;
+        }
+    }
+    }
+    @media (max-width: 599px) and (min-width: 400px) {
+        border: 0px solid black;
+        display: block;
+        margin: 3rem 0rem 1rem 0rem;
+        #myform {
+            display: flex;
+            flex-direction: column; 
+            width: 110%;
+        }
+        #formcontent {
+            border: 1px solid #898989;
+            padding: 1rem;
+            border-radius: 1rem;
+            display: block;
+            margin: 0rem auto 0rem auto;
+        }
+        #myorder {
+            display: block;
+            margin: 3rem auto 1rem auto;
+            border-radius: 1rem;
+            width: 100%;
+        }
+    }
+    @media (max-width: 399px) and (min-width: 0px) {
+        border: 0px solid black;
+        display: block;
+        margin: 3rem 0rem 1rem 0rem;
+        #myform {
+            display: flex;
+            flex-direction: column; 
+            width: 119%;
+        }
+        #formcontent {
+            border: 1px solid #898989;
+            padding: 1rem;
+            border-radius: 1rem;
+            display: block;
+            margin: 0rem auto 0rem auto;
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+        #myorder {
+            display: block;
+            margin: 3rem auto 1rem auto;
+            border-radius: 1rem;
+            width: 100%;
+        }
+    }
 `;
 
 const Checkout = () => {

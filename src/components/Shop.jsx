@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { database } from '../firebase/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, startAfter, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
@@ -20,7 +20,8 @@ const Styledsection = styled.section`
     font-family: "poppins", sans-serif;
     #sidebar {
         margin: 1rem 0rem 0rem 0rem;
-        input {
+        width: max-content;
+        #search {
             width: 20rem;
             height: 3rem;
             padding: .5rem 0rem .5rem 1.1rem;
@@ -124,25 +125,52 @@ const Shop = () => {
     const [allproducts, setallproducts] = useState([]);
     const [search, setsearch] = useState();
     const [loading, setloading] = useState(true);
+    const [lastdoc, setlastdoc] = useState(null);
+    const [currentpage, setcurrentpage] = useState(1);
+    const pagesize = 12;
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
 
-    useEffect(() => {
-        const fetchproducts = async () => {
-            try {
-                const allproductscollection = collection(database, 'shop');
-                const allproductssnapshot = await getDocs(allproductscollection);
-                const allproductslist = allproductssnapshot.docs.map((doc) => ({
+    const fetchproducts = async () => {
+        try {
+            const q = query(collection(database, 'shop'), orderBy('name'), limit(pagesize));
+            const querysnapshot = await getDocs(q);
+            const productarray = querysnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }))
+            setallproducts(productarray);
+            setlastdoc(querysnapshot.docs[querysnapshot.docs.length - 1]);
+            setcurrentpage(currentpage - 1);
+            setloading(false);
+        } catch (error) {
+            console.log("Error in fetching:", error);
+        }
+    }
+
+    const nextfetch = async () => {
+        try {
+            if (lastdoc) {
+                const q = query(collection(database, 'shop'), orderBy('name'), startAfter(lastdoc), limit(pagesize));
+                const querysnapshot = await getDocs(q);
+                const productarray = querysnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
-                }));
-                setallproducts(allproductslist);
-                setloading(false);
+                }))
+                if (productarray.length > 0) {
+                    setallproducts(productarray);
+                    setlastdoc(querysnapshot.docs[querysnapshot.docs.length - 1]);
+                    setcurrentpage(currentpage + 1);
+                    setloading(false);
+                }
             }
-            catch (error) {
-                setloading(true);
-            }
-        };
+        }
+        catch (error) {
+            console.log("Error", error);
+        }
+    }
+
+    useEffect(() => {
         fetchproducts();
     }, [])
 
@@ -169,7 +197,26 @@ const Shop = () => {
                     <Styledsection>
                         <div id='sidebar'>
                             <h1>Filter</h1 >
-                            <input type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
+                            <input id='search' type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
+                            <h5 className='mt-3'>Search by Category</h5>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                    <label className="form-check-label" for="flexCheckDefault">
+                                        Vegetables
+                                    </label>
+                            </div>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                    <label className="form-check-label" for="flexCheckDefault">
+                                        Fruits
+                                    </label>
+                            </div>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                    <label className="form-check-label" for="flexCheckDefault">
+                                        Dairy
+                                    </label>
+                            </div>
                         </div >
                         <div id='shop-products'>
                             <div className="container">
@@ -199,14 +246,13 @@ const Shop = () => {
                                 </div>
                             </div>
                             <div id='buttons'>
-                                <button className='btn btn-secondary text-black'>&laquo;</button>
-                                <button >&raquo;</button>
+                                <button onClick={() => { setcurrentpage(currentpage - 1); fetchproducts(); }} disabled={currentpage === 1} >&laquo;</button>
+                                <button onClick={nextfetch}>&raquo;</button>
                             </div>
                         </div>
                     </Styledsection >
                 </Layout>
             )}
-
         </>
     );
 }
