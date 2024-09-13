@@ -157,7 +157,7 @@ const Navbar = () => {
     const logout = () => {
         localStorage.clear('users');
         toast.success("Logout Successfult");
-        navigate('/Home');
+        // navigate('/Home');
         console.log("logout", user);
     }
 
@@ -202,7 +202,7 @@ const Navbar = () => {
                     ) : (
                         <NavLink to="/Login" >Login</NavLink>
                     )}
-                    <Styledbars href='#'>{<FaBars size={"1.7rem"} onClick={openmenu} />}</Styledbars>
+                    <Styledbars>{<FaBars size={"1.7rem"} onClick={openmenu} />}</Styledbars>
                 </div>
             </Stylednavbar>
         </>
