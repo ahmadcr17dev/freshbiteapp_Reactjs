@@ -35,7 +35,6 @@ const App = () => {
     <>
       <MyState>
         <Styledpage>
-          <Home />
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/Home' element={<Home />} />
