@@ -85,7 +85,7 @@ const Styledsection = styled.section`
     }
     #icons {
         display: flex;
-        justify-content: space-evenly;
+        justify-content: center;
         margin: 1.8rem 0rem 0rem 0rem;
         .icons {
             background-color: #898989;
@@ -93,6 +93,7 @@ const Styledsection = styled.section`
             color: white;
             height: 35px;
             width: 35px;
+            margin: 0rem .1rem 0rem .1rem;
         }
         .icons:hover {
             background-color: black;
@@ -116,6 +117,11 @@ const Styledsection = styled.section`
             height: 3.5rem;
             width: 3.5rem;
             font-size: 1.5rem;
+        }
+    }
+    @media (max-width: 899px) and (min-width: 0px) {
+        #sidebar {
+            display: none;
         }
     }
 `;
@@ -200,29 +206,29 @@ const Shop = () => {
                             <input id='search' type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
                             <h5 className='mt-3'>Search by Category</h5>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                    <label className="form-check-label" for="flexCheckDefault">
-                                        Vegetables
-                                    </label>
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                <label className="form-check-label" for="flexCheckDefault">
+                                    Vegetables
+                                </label>
                             </div>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                    <label className="form-check-label" for="flexCheckDefault">
-                                        Fruits
-                                    </label>
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                <label className="form-check-label" for="flexCheckDefault">
+                                    Fruits
+                                </label>
                             </div>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                    <label className="form-check-label" for="flexCheckDefault">
-                                        Dairy
-                                    </label>
+                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                <label className="form-check-label" for="flexCheckDefault">
+                                    Dairy
+                                </label>
                             </div>
                         </div >
                         <div id='shop-products'>
                             <div className="container">
                                 <div className='row'>
                                     {allproducts.map((product) => (
-                                        <div className='col-md-3 mb-3 col-6 mx-0' key={product.id} >
+                                        <div className='mb-3 col-md-3 col-lg-4 col-xl-3 col-6" mx-0' key={product.id} >
                                             <div className="card">
                                                 <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
                                                 <div className="card-body">
