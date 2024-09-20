@@ -20,6 +20,8 @@ const Styledfooter = styled.div`
     background-color: whitesmoke;
     padding: 3rem 0rem 1rem 0rem;
     width: 100%;
+    height: 100%;
+    flex-grow: 1;
     .mobile-desc {
         display: none;
     }

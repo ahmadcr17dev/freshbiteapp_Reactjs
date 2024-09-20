@@ -7,7 +7,6 @@ import { MoonLoader } from 'react-spinners';
 import { IoCartSharp } from 'react-icons/io5';
 import { MdLink } from 'react-icons/md';
 import { IoMdHeart } from 'react-icons/io';
-import Layout from './Layout';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 import { addtocart, productdetail } from '../redux/CartSlice';
@@ -199,65 +198,63 @@ const Shop = () => {
             {loading ? (
                 <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
             ) : (
-                <Layout>
-                    <Styledsection>
-                        <div id='sidebar'>
-                            <h1>Filter</h1 >
-                            <input id='search' type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
-                            <h5 className='mt-3'>Search by Category</h5>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label className="form-check-label" for="flexCheckDefault">
-                                    Vegetables
-                                </label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label className="form-check-label" for="flexCheckDefault">
-                                    Fruits
-                                </label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                <label className="form-check-label" for="flexCheckDefault">
-                                    Dairy
-                                </label>
-                            </div>
-                        </div >
-                        <div id='shop-products'>
-                            <div className="container">
-                                <div className='row'>
-                                    {allproducts.map((product) => (
-                                        <div className='mb-3 col-md-3 col-lg-4 col-xl-3 col-6" mx-0' key={product.id} >
-                                            <div className="card">
-                                                <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
-                                                <div className="card-body">
-                                                    <p className="card-text" id='category'>{product.category}</p>
-                                                    <h5 className="card-title" id='name'>{product.name}</h5>
-                                                    <p className="card-text" id='price'>${product.price}</p>
-                                                    <p className='card-text' id='stock'>Stock: {product.stock}</p>
-                                                    {product.weigh && <p className='card-text' id='quantity'>Quantity: {product.weigh}kg</p>}
-                                                    {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
-                                                    {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
-                                                    {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
-                                                    <div id='icons'>
-                                                        <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
-                                                        <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
-                                                        <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} /></NavLink>
-                                                    </div>
+                <Styledsection>
+                    <div id='sidebar'>
+                        <h1>Filter</h1 >
+                        <input id='search' type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
+                        <h5 className='mt-3'>Search by Category</h5>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">
+                                Vegetables
+                            </label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">
+                                Fruits
+                            </label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">
+                                Dairy
+                            </label>
+                        </div>
+                    </div >
+                    <div id='shop-products'>
+                        <div className="container">
+                            <div className='row'>
+                                {allproducts.map((product) => (
+                                    <div className='mb-3 col-md-3 col-lg-4 col-xl-3 col-6" mx-0' key={product.id} >
+                                        <div className="card">
+                                            <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
+                                            <div className="card-body">
+                                                <p className="card-text" id='category'>{product.category}</p>
+                                                <h5 className="card-title" id='name'>{product.name}</h5>
+                                                <p className="card-text" id='price'>${product.price}</p>
+                                                <p className='card-text' id='stock'>Stock: {product.stock}</p>
+                                                {product.weigh && <p className='card-text' id='quantity'>Quantity: {product.weigh}kg</p>}
+                                                {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
+                                                {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
+                                                {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
+                                                <div id='icons'>
+                                                    <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
+                                                    <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
+                                                    <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} /></NavLink>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))};
-                                </div>
-                            </div>
-                            <div id='buttons'>
-                                <button onClick={() => { setcurrentpage(currentpage - 1); fetchproducts(); }} disabled={currentpage === 1} >&laquo;</button>
-                                <button onClick={nextfetch}>&raquo;</button>
+                                    </div>
+                                ))};
                             </div>
                         </div>
-                    </Styledsection >
-                </Layout>
+                        <div id='buttons'>
+                            <button onClick={() => { setcurrentpage(currentpage - 1); fetchproducts(); }} disabled={currentpage === 1} >&laquo;</button>
+                            <button onClick={nextfetch}>&raquo;</button>
+                        </div>
+                    </div>
+                </Styledsection >
             )}
         </>
     );
