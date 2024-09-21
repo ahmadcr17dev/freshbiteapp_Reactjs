@@ -5,7 +5,6 @@ import i from './images/i.png';
 import ii from './images/ii.png';
 import iii from './images/iii.png';
 import iv from './images/iv.png';
-import v from './images/v.png';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
@@ -95,7 +94,7 @@ const Styledteam = styled.section`
     display: block;
     margin: 8rem auto 3rem auto;
     padding: 3rem 5rem 3rem 5rem;
-    width: 90%;
+    width: 100%;
     font-family: "poppins", sans-serif;
     #second-box {
         text-align: center;
@@ -106,8 +105,85 @@ const Styledteam = styled.section`
             font-weight: 400;
             color: #898989;
         }
+        #para-1 {
+            display: none;
+        }
         #team-members {
             display: block;
+            div {
+                margin: 3rem 0rem 1rem 0rem;
+                padding: 0rem .5rem 0rem .5rem;
+                width: 100%;
+                img {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: .3rem;
+                }
+                h5 {
+                    padding: 1.8rem 0rem 0rem 0rem;
+                }
+                p {
+                    font-size: .9rem;
+                }
+                #para-1 {
+                    display: none;
+                }
+            }
+        }
+    }
+    @media (max-width: 899px) and (min-width: 600px) {
+        #second-box {
+            h3 {
+                font-size: 2rem;
+            }
+            p {
+                font-weight: 400;
+                font-size: .8rem;
+            }
+            #para-1 {
+                display: none;
+            }
+            #team-members {
+                div {
+                    h5 {
+                        font-size: 1rem;
+                    }
+                    p {
+                        font-size: .8rem;
+                    }
+                }
+            }
+        }
+    }
+    @media (max-width: 599px) and (min-width: 0px) {
+        display: block;
+        margin: 8rem auto 3rem auto;
+        padding: 3rem 1rem 3rem 1rem;
+        width: 100%;
+        #second-box {
+            width: 100%;
+            h3 {
+                font-size: 1.5rem;
+                width: 100%;
+            }
+            #para-1 {
+                display: block;
+                font-weight: 400;
+                font-size: .8rem;
+            }
+            #para {
+                display: none;
+            }
+            #team-members {
+                div {
+                    h5 {
+                        font-size: 1.3rem;
+                    }
+                    p {
+                        font-size: .8rem;
+                    }
+                }
+            }
         }
     }
 `;
@@ -125,17 +201,21 @@ const teamdata = [
     {
         id: '4', image: `${iv}`, name: 'Alexandria Great', status: 'Project Manager'
     },
-    {
-        id: '5', image: `${v}`, name: 'Nikki Chown', status: 'Store manager'
-    },
 ];
 
 const responsive = {
     desktop: {
-        items: 3,
+        items: 4,
         breakpoint: { max: 1900, min: 900 },
-        width: 33,
     },
+    tablet: {
+        items: 3,
+        breakpoint: { max: 899, min: 600 },
+    },
+    mobile: {
+        items: 1,
+        breakpoint: { max: 599, min: 0 },
+    }
 };
 
 const About = () => {
@@ -172,19 +252,25 @@ const About = () => {
                     <Styledteam>
                         <div id="second-box">
                             <h3>Meet Our Team</h3>
-                            <p>
+                            <p id="para">
                                 Our Team consist of very dedicated & hard worker men & women <br /> who will assist you till the end
+                            </p>
+                            <p id="para-1">
+                                Our Team consist of very dedicated & hard worker men & women who will assist you till the end
                             </p>
                             <div id="team-members">
                                 <Carousel
-                                    autoPlay={false} 
-                                    infiniteLoop={false}
+                                    autoPlay={true}
+                                    infiniteLoop={true}
                                     swipeable={true}
-                                    showArrows={true}
-                                    showIndicators={true}
+                                    showDots={false}
                                     responsive={responsive}
                                     infinite={true}
-                                    
+                                    keyBoardControl={true}
+                                    ssr={true}
+                                    itemClass="carousel-item-padding-0-px"
+                                    pauseOnHover={false}
+                                    arrows={false}
                                 >
                                     {teamdata.map((item) => (
                                         <div key={item.id}>
