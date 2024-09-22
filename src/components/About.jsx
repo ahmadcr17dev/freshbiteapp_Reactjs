@@ -7,6 +7,8 @@ import iii from './images/iii.png';
 import iv from './images/iv.png';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { collection, getDocs } from "firebase/firestore";
+import { database } from '../firebase/firebase';
 
 const Styledsection = styled.section`
     display: block;
@@ -93,7 +95,7 @@ const Styledsection = styled.section`
 const Styledteam = styled.section`
     display: block;
     margin: 8rem auto 3rem auto;
-    padding: 3rem 5rem 3rem 5rem;
+    padding: 3rem 0rem 3rem 0rem;
     width: 100%;
     font-family: "poppins", sans-serif;
     #second-box {
@@ -158,7 +160,7 @@ const Styledteam = styled.section`
     @media (max-width: 599px) and (min-width: 0px) {
         display: block;
         margin: 8rem auto 3rem auto;
-        padding: 3rem 1rem 3rem 1rem;
+        padding: 3rem 0rem 3rem 0rem;
         width: 100%;
         #second-box {
             width: 100%;
@@ -183,6 +185,67 @@ const Styledteam = styled.section`
                         font-size: .8rem;
                     }
                 }
+            }
+        }
+    }
+`;
+
+const Styledblog = styled.section`
+    display: block;
+    margin: 4rem auto 3rem auto;
+    padding: 3rem 0rem 3rem 0rem;
+    width: 100%;
+    font-family: "poppins", sans-serif;
+    #third-box {
+        text-align: center;
+        h3 {
+            font-size: 2.3rem;
+        }
+        p {
+            font-weight: 400;
+            color: #898989;
+        }
+        #paras-1 {
+            display: none;
+        }
+        .card {
+            text-align: left;
+            margin: 1rem .5rem 0rem .5rem;
+            padding: .5rem;
+        }
+    }
+    @media (max-width: 900px) and (min-width: 600px) {
+        #third-box {
+            h3 {
+                font-size: 2rem;
+            }
+            p {
+                font-weight: 400;
+                font-size: .8rem;
+            }
+            #paras-1 {
+                display: none;
+            }
+        }
+    }
+    @media (max-width: 599px) and (min-width: 0px) {
+        display: block;
+        margin: 3rem auto 3rem auto;
+        padding: 3rem 0rem 3rem 0rem;
+        width: 100%;
+        #third-box {
+            width: 100%;
+            h3 {
+                font-size: 1.5rem;
+                width: 100%;
+            }
+            #paras-1 {
+                display: block;
+                font-weight: 400;
+                font-size: .8rem;
+            }
+            #paras {
+                display: none;
             }
         }
     }
@@ -218,13 +281,43 @@ const responsive = {
     }
 };
 
+const responsiveblog = {
+    desktop: {
+        items: 3,
+        breakpoint: { max: 1900, min: 900 },
+    },
+    tablet: {
+        items: 2,
+        breakpoint: { max: 899, min: 600 },
+    },
+    mobile: {
+        items: 1,
+        breakpoint: { max: 599, min: 0 },
+    }
+};
+
 const About = () => {
 
     const [loading, setloading] = useState(true);
+    const [blog, setblog] = useState([]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setloading(false);
+            const fetchproducts = async () => {
+                try {
+                    const productdocs = collection(database, 'blog');
+                    const productsnap = await getDocs(productdocs);
+                    const productlist = productsnap.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }))
+                    setblog(productlist);
+                    setloading(false);
+                } catch (error) {
+                    setloading(true);
+                }
+            }
+            fetchproducts();
         }, 3000)
         return () => clearTimeout(timer);
     }, [])
@@ -250,7 +343,7 @@ const About = () => {
                         </div>
                     </Styledsection>
                     <Styledteam>
-                        <div id="second-box">
+                        <div id="second-box" className="container">
                             <h3>Meet Our Team</h3>
                             <p id="para">
                                 Our Team consist of very dedicated & hard worker men & women <br /> who will assist you till the end
@@ -283,6 +376,44 @@ const About = () => {
                             </div>
                         </div>
                     </Styledteam>
+                    <Styledblog>
+                        <div id="third-box" className="container">
+                            <h3>Our Blog</h3>
+                            <p id="paras">
+                                Our Team consist of very dedicated & hard worker men & women <br /> who will assist you till the end
+                            </p>
+                            <p id="paras-1">
+                                Our Team consist of very dedicated & hard worker men & women who will assist you till the end
+                            </p>
+                            <div>
+                                <Carousel
+                                    autoPlay={true}
+                                    infiniteLoop={true}
+                                    swipeable={true}
+                                    showDots={false}
+                                    responsive={responsiveblog}
+                                    infinite={true}
+                                    keyBoardControl={true}
+                                    ssr={true}
+                                    itemClass="carousel-item-padding-0-px"
+                                    pauseOnHover={false}
+                                    arrows={false}
+                                >
+                                    {blog.map((blog) => (
+                                        <div key={blog.id} className="card">
+                                            <img src={blog.imageurl} className="card-img-top" alt="Blog Pic" />
+                                            <div className="card-body">
+                                                <p className="card-text">In {blog.category}</p>
+                                                <h5 className="card-title">{blog.title.slice(0, 45)}</h5>
+                                                <p className="card-text">{blog.description.slice(0, 160)}</p>
+                                                <a href={blog.link} className="btn btn-danger">Read More</a>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Carousel>
+                            </div>
+                        </div>
+                    </Styledblog>
                 </>
             )}
         </>
