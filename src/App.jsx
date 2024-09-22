@@ -15,6 +15,7 @@ import { Toaster } from 'react-hot-toast';
 import MyState from './context/MyState';
 import { useDispatch } from 'react-redux';
 import { initializeCart } from './redux/CartSlice';
+import Wishlist from './components/Wishlist';
 
 const Styledpage = styled.div`
     box-sizing: border-box;
@@ -45,6 +46,7 @@ const App = () => {
             <Route path='/checkout' element={<><Navbar /><Checkout /><Footer /></>} />
             <Route path='/Cart' element={<><Navbar /><Cart /><Footer /></>} />
             <Route path='/About' element={<><Navbar /><About /><Footer /></>} />
+            <Route path='/wishlist' element={<><Navbar /><Wishlist /><Footer /></>} />
           </Routes>
           <Toaster />
         </Styledpage>

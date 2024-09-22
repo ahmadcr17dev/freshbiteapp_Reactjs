@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import veg from './images/veg.jpg';
 import fruit from './images/fruit.jpg';
+import { NavLink } from 'react-router-dom';
 
 const Styledsection = styled.div`
     margin: 5rem 0rem 1rem 0rem;
@@ -225,17 +226,21 @@ const HeroSection = () => {
             <Styledsection>
                 <div className='veg-section' style={{ backgroundImage: `url(${veg})` }} >
                     <h1>
-                        Tasty <y style={{color: "coral"}} > Vegetables </y> <br /> From Farm <br /> Vendors
+                        Tasty <y style={{ color: "coral" }} > Vegetables </y> <br /> From Farm <br /> Vendors
                     </h1>
                     <p>Every Friday Check<br /> Best Margla Deals</p>
-                    <button className='btn btn-success'>Shop Now</button>
+                    <NavLink to='/Shop'>
+                        <button className='btn btn-success'>Shop Now</button>
+                    </NavLink>
                 </div>
                 <div className='fruit-section' style={{ backgroundImage: `url(${fruit})` }} >
                     <h1>
-                        <y style={{color: "coral"}}> Delicious </y> Fruits <br /> From South <br /> Africa
+                        <y style={{ color: "coral" }}> Delicious </y> Fruits <br /> From South <br /> Africa
                     </h1>
                     <p>Every Friday Check<br /> Best Margla Deals</p>
-                    <button className='btn btn-success'>Shop Now</button>
+                    <NavLink to='/Shop'>
+                        <button className='btn btn-success'>Shop Now</button>
+                    </NavLink>
                 </div>
             </Styledsection>
         </>

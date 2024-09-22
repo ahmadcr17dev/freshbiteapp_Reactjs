@@ -1,12 +1,13 @@
 // src/components/Cart.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deletefromcart, increment, decrement, clearcart, selectCartSubtotal, totalquantity, checkout } from '../redux/CartSlice';
 import styled from 'styled-components';
 import { FaTrash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
+import { IoCartSharp } from 'react-icons/io5';
+import { addtocart, removefromwishlist } from '../redux/wishlistslice';
 
 const Styledsection = styled.section`
     display: block;
@@ -43,27 +44,18 @@ const Styledsection = styled.section`
         p {
             margin: 1.9rem 0rem 0rem 0rem;
         }
-        #buttons {
-            display: flex;
-            position: absolute;
-            left: 43%;
-            button {
-                height: 2.5rem;
-                margin: 1.3rem 1rem 0rem 1rem;
-                border: 0px solid black;
-            }
-            input {
-                width: 1rem;
-                height: 2.5rem;
-                padding: auto;
-                margin: 1.3rem 0rem 0rem 0rem;
-                border: 0px solid black;
-            }
-        }
         #trashicon {
             margin: 2rem 3rem 0rem 0rem;
         }
         #trashicon:hover {
+            cursor: pointer;
+        }
+        #carticon {
+            position: absolute;
+            left: 66%;
+            margin: 1.9rem 0rem 0rem 0rem;
+        }
+        #carticon:hover {
             cursor: pointer;
         }
         #price {
@@ -72,9 +64,9 @@ const Styledsection = styled.section`
             color: #696969;
             font-weight: 500;
         }
-        #subtotal {
+        #quantity {
             position: absolute;
-            left: 65%;
+            left: 47%;
             color: #696969;
             font-weight: 500;
         }
@@ -82,32 +74,6 @@ const Styledsection = styled.section`
             margin: 0rem;
             font-size: .8rem;
             color: gray;
-        }
-    }
-    .lowerbox {
-        border: 1px solid #898989;
-        border-radius: 1rem;
-        margin: 3rem 0rem 1rem 0rem;
-        padding: 1.9rem 1.1rem 1.1rem 1.1rem;
-        div {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-        div:nth-child(1) {
-            h6 {
-                font-size: 1rem;
-            }
-        }
-        div:nth-child(2) {
-            h4 {
-                font-size: 1.8rem;
-            }
-            p {
-                color: red;
-                font-size: 1.4rem;
-                font-weight: 500;
-            }
         }
     }
     @media (max-width: 1300px) and (min-width: 900px) {
@@ -254,13 +220,12 @@ const Styledmobile = styled.section`
     }
 `;
 
-const Cart = () => {
+const Wishlist = () => {
 
     const [loading, setloading] = useState(true);
     const dispatch = useDispatch();
-    const cartitems = useSelector((state) => state.cart.items);
-    const subtotal = useSelector(selectCartSubtotal);
-    const totalitems = useSelector(totalquantity);
+    const wishitems = useSelector((state) => state.wishlist.items);
+    const cartitems = useSelector((state) => state.cart);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -276,26 +241,19 @@ const Cart = () => {
         return () => clearTimeout(timer);
     }, [])
 
-    const handleRemove = (name) => {
-        dispatch(deletefromcart(name));
-        toast.success(`${name.name} is removed from the cart`);
-    };
-
-    const handleincrement = (id) => {
-        dispatch(increment(id));
+    const handleremove = (item) => {
+        dispatch(removefromwishlist(item));
+        toast.success(`${item.name} is removed from wishlist`);
     }
 
-    const handledecrement = (id) => {
-        dispatch(decrement(id));
-    }
-
-    const handleclearcart = () => {
-        dispatch(clearcart());
-        toast.success("Removed all items from the cart");
-    }
-
-    const handlecheckout = () => {
-        dispatch(checkout());
+    const handlecart = (item) => {
+        const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
+        if (!isProductInCart) {
+            dispatch(addtocart(item));
+            toast.success(`${item.name} is added to the cart`);
+        } else {
+            toast.error(`${item.name} is already in the cart`);
+        }
     }
 
     return (
@@ -309,16 +267,16 @@ const Cart = () => {
                             <p>Product</p>
                             <p>Price</p>
                             <p>Quantity</p>
-                            <p>SubTotal</p>
+                            <p>Add to Cart</p>
                             <p>Remove</p>
                         </div>
                         <div>
-                            {cartitems.length === 0 ? (
-                                <p>Your cart is empty.</p>
+                            {wishitems.length === 0 ? (
+                                <p>Your Wishlist is Empty.</p>
                             ) : (
                                 <>
                                     <div>
-                                        {cartitems.map((item) => (
+                                        {wishitems.map((item) => (
                                             <div id='items' key={item.name}>
                                                 <div id='itemname'>
                                                     <img src={item.imageurl} alt='Product Pic' />
@@ -331,42 +289,22 @@ const Cart = () => {
                                                     </p>
                                                 </div>
                                                 <p id='price'>${item.price}</p>
-                                                <div id='buttons'>
-                                                    <button className='btn' onClick={() => handledecrement(item)} disabled={item.quantity <= 1} >-</button>
-                                                    <p>
-                                                        {item.quantity}
-                                                    </p>
-                                                    <button className='btn' onClick={() => handleincrement(item)} disabled={item.quantity >= item.stock} >+</button>
-                                                </div>
-                                                <p id='subtotal'>${parseFloat(item.quantity * item.price).toFixed(2)}</p>
-                                                <FaTrash onClick={() => handleRemove(item)} color={'red'} id='trashicon' />
+                                                <p id='quantity'>{item.quantity}</p>
+                                                <IoCartSharp color={"#393939"} id='carticon' size={'1.3rem'} onClick={() => handlecart(item)} />
+                                                <FaTrash color={'red'} id='trashicon' onClick={() => handleremove(item)} />
                                             </div>
                                         ))}
-                                        <button className='btn btn-danger mt-5' onClick={handleclearcart}>Clear Cart</button>
-                                    </div>
-                                    <div className='lowerbox'>
-                                        <div>
-                                            <h6>Total items: </h6>
-                                            <p>{totalitems} items</p>
-                                        </div>
-                                        <div>
-                                            <h4>Total</h4>
-                                            <p>${parseFloat(subtotal).toFixed(2)}</p>
-                                        </div>
-                                        <button className='container btn btn-danger' onClick={handlecheckout}>
-                                            <NavLink to="/checkout" className='container text-decoration-none text-white'>Prodeed to checkout</NavLink>
-                                        </button>
                                     </div>
                                 </>
                             )}
                         </div>
                     </Styledsection>
                     <Styledtab id='tablet'>
-                        {cartitems.length === 0 ? (
-                            <p>Your Cart is Empty!</p>
+                        {wishitems.length === 0 ? (
+                            <p>Your Wishlist is Empty!</p>
                         ) : (
                             <div className='container'>
-                                {cartitems.map((item) => (
+                                {wishitems.map((item) => (
                                     <div key={item.id} id='innerbox'>
                                         <div id='imagename'>
                                             <img src={item.imageurl} alt={item.name} />
@@ -386,42 +324,20 @@ const Cart = () => {
                                             </div>
                                             <div id='items'>
                                                 <p>${parseFloat(item.price).toFixed(2)}</p>
-                                                <div id='button'>
-                                                    <button className='btn' onClick={() => handledecrement(item)} disabled={item.quantity <= 1} >-</button>
-                                                    <p>
-                                                        {item.quantity}
-                                                    </p>
-                                                    <button className='btn' onClick={() => handleincrement(item)} disabled={item.quantity >= item.stock} >+</button>
-                                                </div>
-                                                <p>${parseFloat(item.price * item.quantity).toFixed(2)}</p>
-                                                <FaTrash style={{ marginRight: '-15px', marginTop: '5px' }} color={'red'} size={".8rem"} onClick={() => handleRemove(item)} />
+                                                <FaTrash style={{ marginRight: '-15px', marginTop: '5px' }} color={'red'} size={".8rem"} />
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                                <button className='btn btn-danger mt-5' onClick={handleclearcart}>Clear Cart</button>
-                                <div className='lowerbox' style={{ marginTop: '3rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h6>Total items: </h6>
-                                        <p>{totalitems} items</p>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h4>Total</h4>
-                                        <p>${parseFloat(subtotal).toFixed(2)}</p>
-                                    </div>
-                                    <button className='container btn btn-danger' onClick={handlecheckout}>
-                                        <NavLink to="/checkout" className='container text-decoration-none text-white'>Prodeed to checkout</NavLink>
-                                    </button>
-                                </div>
                             </div>
                         )}
                     </Styledtab>
                     <Styledmobile>
-                        {cartitems.length === 0 ? (
-                            <p>Your cart is empty</p>
+                        {wishitems.length === 0 ? (
+                            <p>Your Wishlist is Empty</p>
                         ) : (
                             <div className='container'>
-                                {cartitems.map((product) => (
+                                {wishitems.map((product) => (
                                     <div>
                                         <div id='product-detail' className='container'>
                                             <div>
@@ -431,7 +347,7 @@ const Cart = () => {
                                                 <p id='category'>{product.category} / {product.name}</p>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <h3 id='name'>{product.name}</h3>
-                                                    <FaTrash id='trash' onClick={() => handleRemove(product)} />
+                                                    {/* <FaTrash id='trash' onClick={() => handleRemove(product)} /> */}
                                                 </div>
                                                 {product.weigh && <p id='quantity'>{product.weigh} kg</p>}
                                                 {product.bunch && <p id='bunch'>{product.bunch}</p>}
@@ -439,34 +355,14 @@ const Cart = () => {
                                                 {product.dozen && <p id='dozen'>{product.dozen}</p>}
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <p id='price'>${product.price}</p>
-                                                    <div id='mobile-button' style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                        <button className='btn' onClick={() => handledecrement(product)} disabled={product.quantity <= 1} >-</button>
-                                                        <p style={{ margin: '0rem .8rem 0rem .8rem' }}>{product.quantity}</p>
-                                                        <button className='btn' onClick={() => handleincrement(product)} disabled={product.quantity === product.stock} >+</button>
-                                                    </div>
                                                 </div>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between',margin: '1rem 0rem 0rem 0rem' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '1rem 0rem 0rem 0rem' }}>
                                                     <h6 style={{ fontSize: '1.3rem', fontWeight: '600' }}>SubTotal</h6>
-                                                    <p style={{ fontSize: '1.3rem', fontWeight: '630' }}>${parseFloat(product.price * product.quantity).toFixed(2)}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                                <button className='btn btn-danger mt-5' onClick={handleclearcart}>Clear Cart</button>
-                                <div className='lowerbox p-1' style={{ margin: '3rem 0rem 3rem 0rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h6>Total items: </h6>
-                                        <p>{totalitems} items</p>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h4 style={{fontSize: '1.6rem'}}>Total</h4>
-                                        <p style={{color: 'red',fontWeight: '600', fontSize: '1.3rem'}}>${parseFloat(subtotal).toFixed(2)}</p>
-                                    </div>
-                                    <button className='container btn btn-danger' onClick={handlecheckout}>
-                                        <NavLink to="/checkout" className='container text-decoration-none text-white'>Prodeed to checkout</NavLink>
-                                    </button>
-                                </div>
                             </div>
                         )}
                     </Styledmobile>
@@ -476,4 +372,4 @@ const Cart = () => {
     );
 };
 
-export default Cart;
+export default Wishlist;

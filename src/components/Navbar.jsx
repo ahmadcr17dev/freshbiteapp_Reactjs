@@ -7,6 +7,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { RxCross2 } from "react-icons/rx";
+import { CiLogin } from "react-icons/ci";
+import { CiLogout } from "react-icons/ci";
+import { CiHeart } from "react-icons/ci";
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -44,38 +47,39 @@ const Stylednavbar = styled.nav`
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        margin-top: 30px;
-        div {
-            padding: 0px 15px 0px 15px;
+        margin: 1.9rem 1.5rem 0rem 0rem;
+        #wishlist {
+            padding: 0px 5px 0px 5px;
             margin-top: 8px;
             span {
                 position: absolute;
                 top: 2.7rem;
-                right: 8.7rem;
+                right: 6.3rem;
                 font-size: 10px;
                 border-radius: 100%;
                 background-color: red;
             }
         }
-        a:nth-child(2) {
-            background-color: none;
-            font-size: 17px;
-            color: black;
-            text-decoration: none;
-            padding: 5px 35px 10px 35px;
-            height: 2.4rem;
-            border-radius: 8px;
-            border: 1px solid #696969;
-        }
-        a:nth-child(2):hover {
-            background-color: #696969;
-            transition: 0.5s;
-            color: white;
+        #cart {
+            padding: 0px 5px 0px 5px;
+            margin-top: 8px;
+            span {
+                position: absolute;
+                top: 2.7rem;
+                right: 4.19rem;
+                font-size: 10px;
+                border-radius: 100%;
+                background-color: red;
+            }
         }
     }
+    #login {
+        padding: 0px 5px 0px 5px;
+        margin-top: 8px;
+    }
     #logout {
-        font-size: 1rem;
-        padding: 5px 30px 0px 30px;
+        padding: 0px 5px 0px 5px;
+        margin-top: 8px;
     }
     #cross {
         display: none;
@@ -89,13 +93,13 @@ const Stylednavbar = styled.nav`
             position: fixed;
             left: 0;
             top: 0;
-            width: 0;
+            width: 100%;
             height: 100vh;
             background-color: white;
             text-align: center;
             padding-top: 1rem;
-            z-index: 1;
-            transition: .5s;
+            z-index: 1000;
+            transition: left 0.5s ease-in-out;
             overflow-x: hidden;
             a {
                 font-size: 1rem;
@@ -111,26 +115,40 @@ const Stylednavbar = styled.nav`
         }
         div:nth-child(3) {
             margin-top: 1.5rem;
-            div {
+            #wishlist {
+                margin: 1rem 0rem 0rem 0rem;
                 span {
                     position: absolute;
-                    top: 3.3rem;
-                    right: 4.4rem;
+                    top: 3.8rem;
+                    right: 8.0rem;
                     z-index: 0;
                 }
             }
-            a {
-                margin-top: 10px;
-                margin-right: 10px;
+            #cart {
+                margin: 1rem 0rem 0rem 0rem;
+                span {
+                    position: absolute;
+                    top: 3.8rem;
+                    right: 5.7rem;
+                    z-index: 0;
+                }
             }
-            a:nth-child(2) {
-                display: none;
+            #login {
+                padding: 0px 5px 0px 5px;
+                margin: 1rem 1rem 0rem 0rem;
+            }
+            #logout {
+                padding: 0px 5px 0px 5px;
+                margin: 1rem 1rem 0rem 0rem;
             }
         }
         #cross {
             display: block;
             position: absolute;
             right: 3%;
+        }
+        #bars {
+            margin: 1rem -1rem 0rem 0rem;
         }
     }
 `;
@@ -153,6 +171,7 @@ const Navbar = () => {
     const user = localStorage.getItem('users');
     const navigate = useNavigate();
     const cartcount = useSelector((state) => state.cart.items.length);
+    const wishcount = useSelector((state) => state.wishlist.items.length);
 
     const logout = () => {
         localStorage.clear('users');
@@ -183,26 +202,32 @@ const Navbar = () => {
                         <NavLink to='/shop'>Shop</NavLink>
                         <NavLink to="/about">About</NavLink>
                         {user ? (
-                            <NavLink onClick={logout}>LogOut</NavLink>
+                            <NavLink onClick={logout} id='logout'><CiLogout size={"1.5rem"} color={'#383838'} /></NavLink>
                         ) : (
-                            <NavLink to="/Login">Login</NavLink>
+                            <NavLink to="/Login" id='login'><CiLogin size={"1.5rem"} color={'#383838'} /></NavLink>
                         )}
                         <RxCross2 size={"1.9rem"} color={'black'} id='cross' onClick={menuclose} />
                     </ul>
                 </div>
                 <div>
-                    <div>
-                        <NavLink to='/Cart'>{<PiShoppingCartLight size={"1.7rem"} color={"#383838"} />}</NavLink>
+                    <div id='wishlist'>
+                        <NavLink to='/wishlist'>{<CiHeart size={"1.5rem"} color={"#383838"} />}</NavLink>
+                        {wishcount >= 0 && (
+                            <span className="badge badge-danger">{wishcount}</span>
+                        )}
+                    </div>
+                    <div id='cart'>
+                        <NavLink to='/Cart'>{<PiShoppingCartLight size={"1.5rem"} color={"#383838"} />}</NavLink>
                         {cartcount >= 0 && (
                             <span className="badge badge-danger">{cartcount}</span>
                         )}
                     </div>
                     {user ? (
-                        <NavLink onClick={logout} id='logout'>LogOut</NavLink>
+                        <NavLink onClick={logout} id='logout'><CiLogout size={"1.5rem"} color={'#383838'} /></NavLink>
                     ) : (
-                        <NavLink to="/Login" >Login</NavLink>
+                        <NavLink to="/Login" id='login'><CiLogin size={"1.5rem"} color={'#383838'} /></NavLink>
                     )}
-                    <Styledbars>{<FaBars size={"1.7rem"} onClick={openmenu} />}</Styledbars>
+                    <Styledbars>{<FaBars id='bars' size={"1.5rem"} onClick={openmenu} />}</Styledbars>
                 </div>
             </Stylednavbar>
         </>

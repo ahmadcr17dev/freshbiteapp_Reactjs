@@ -10,6 +10,7 @@ import { IoMdHeart } from 'react-icons/io';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 import { addtocart, productdetail } from '../redux/CartSlice';
+import { addtowishlist } from '../redux/wishlistslice';
 
 const Styledsection = styled.section`
     margin: 10rem 2rem 5rem 2rem;
@@ -135,6 +136,7 @@ const Shop = () => {
     const pagesize = 12;
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
+    const wishitems = useSelector((state) => state.wishlist);
 
     const fetchproducts = async () => {
         try {
@@ -193,6 +195,17 @@ const Shop = () => {
         dispatch(productdetail(item));
     }
 
+    const handlewishlist = (item) => {
+        const isitemsexists = wishitems.items.some(wishitem => wishitem.id === item.id);
+        if(!isitemsexists) {
+            dispatch(addtowishlist(item));
+            toast.success(`${item.name} is added to wishlist`);
+        }
+        else {
+            toast.error(`${item.name} is already in the wishlist`);
+        }
+    }
+
     return (
         <>
             {loading ? (
@@ -241,7 +254,7 @@ const Shop = () => {
                                                 <div id='icons'>
                                                     <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
                                                     <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
-                                                    <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} /></NavLink>
+                                                    <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} onClick={() => handlewishlist(product)} /></NavLink>
                                                 </div>
                                             </div>
                                         </div>

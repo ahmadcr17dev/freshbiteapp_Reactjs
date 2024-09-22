@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import first from './images/first.jpg';
 import third from './images/third.jpg';
 import second from './images/second.jpeg';
+import { NavLink } from 'react-router-dom';
 
 const Styledsection = styled.div`
     display: flex;
@@ -88,17 +89,23 @@ const HomeMid = () => {
     return (
         <>
             <Styledsection>
-                <div style={{backgroundImage: `url(${second})`}} >
-                    <h3>Fresh <y style={{color: "tomato"}} > Vegies </y> <br /> Everyday </h3>
-                    <button className='btn btn-secondary' >Shop Now</button>
+                <div style={{ backgroundImage: `url(${second})` }} >
+                    <h3>Fresh <y style={{ color: "tomato" }} > Vegies </y> <br /> Everyday </h3>
+                    <NavLink to='/Shop'>
+                        <button className='btn btn-secondary' >Shop Now</button>
+                    </NavLink>
                 </div>
-                <div style={{backgroundImage: `url(${first})`}} >
-                    <h3>Sweet <y style={{color: "orange"}}> Organic </y> <br /> Drinks </h3>
-                    <button className='btn btn-secondary' >Shop Now</button>
+                <div style={{ backgroundImage: `url(${first})` }} >
+                    <h3>Sweet <y style={{ color: "orange" }}> Organic </y> <br /> Drinks </h3>
+                    <NavLink to='/Shop'>
+                        <button className='btn btn-secondary' >Shop Now</button>
+                    </NavLink>
                 </div>
-                <div style={{backgroundImage: `url(${third})`}} >
-                    <h3>Fairly <y style={{color: "red"}} > Meat </y> <br /> Lovers </h3>
-                    <button className='btn btn-secondary' >Shop Now</button>
+                <div style={{ backgroundImage: `url(${third})` }} >
+                    <h3>Fairly <y style={{ color: "red" }} > Meat </y> <br /> Lovers </h3>
+                    <NavLink to='/Shop'>
+                        <button className='btn btn-secondary' >Shop Now</button>
+                    </NavLink>
                 </div>
             </Styledsection>
         </>

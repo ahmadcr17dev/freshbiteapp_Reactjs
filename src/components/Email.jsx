@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
+import { collection, query, where, addDoc, getDocs, Timestamp } from "firebase/firestore";
 import { database } from "../firebase/firebase";
 import toast from "react-hot-toast";
 
@@ -151,7 +151,19 @@ const Email = () => {
                     setEmail('');
                     return;
                 }
-                await addDoc(subscribeRef, { Email: Email });
+                await addDoc(subscribeRef, {
+                    Email: Email,
+                    role: "user",
+                    time: Timestamp.now(),
+                    date: new Date().toLocaleString(
+                        "en-US",
+                        {
+                            month: 'short',
+                            day: '2-digit',
+                            year: 'numeric'
+                        }
+                    )
+                });
                 toast.success('Successfully Registered');
             } catch (error) {
                 toast.error('Failed to Subscribe. Try again');
