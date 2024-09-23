@@ -14,9 +14,8 @@ import { addtowishlist } from '../redux/wishlistslice';
 
 const Styledsection = styled.section`
     margin: 10rem 2rem 5rem 2rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    display: block;
+    justify-content: center;
     font-family: "poppins", sans-serif;
     #sidebar {
         margin: 1rem 0rem 0rem 0rem;
@@ -129,57 +128,62 @@ const Styledsection = styled.section`
 const Shop = () => {
 
     const [allproducts, setallproducts] = useState([]);
+    const [filterproduct, setfilterproduct] = useState([]);
     const [search, setsearch] = useState();
     const [loading, setloading] = useState(true);
-    const [lastdoc, setlastdoc] = useState(null);
+    const [pricerange, setpricerange] = useState([0, 100]);
+    const [category, setcategory] = useState('all');
     const [currentpage, setcurrentpage] = useState(1);
     const pagesize = 12;
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
     const wishitems = useSelector((state) => state.wishlist);
 
-    const fetchproducts = async () => {
-        try {
-            const q = query(collection(database, 'shop'), orderBy('name'), limit(pagesize));
-            const querysnapshot = await getDocs(q);
-            const productarray = querysnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }))
-            setallproducts(productarray);
-            setlastdoc(querysnapshot.docs[querysnapshot.docs.length - 1]);
-            setcurrentpage(currentpage - 1);
-            setloading(false);
-        } catch (error) {
-            console.log("Error in fetching:", error);
-        }
-    }
-
-    const nextfetch = async () => {
-        try {
-            if (lastdoc) {
-                const q = query(collection(database, 'shop'), orderBy('name'), startAfter(lastdoc), limit(pagesize));
-                const querysnapshot = await getDocs(q);
-                const productarray = querysnapshot.docs.map((doc) => ({
+    useEffect(() => {
+        const fetchallproducts = async () => {
+            try {
+                const productdocument = query(collection(database, 'shop'));
+                const productsnap = await getDocs(productdocument);
+                const productlist = productsnap.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
-                }))
-                if (productarray.length > 0) {
-                    setallproducts(productarray);
-                    setlastdoc(querysnapshot.docs[querysnapshot.docs.length - 1]);
-                    setcurrentpage(currentpage + 1);
-                    setloading(false);
-                }
+                }));
+                setallproducts(productlist);
+                setfilterproduct(productlist);
+                setloading(false);
+            } catch (error) {
+                console.log("Error:", error);
+                setloading(true);
             }
         }
-        catch (error) {
-            console.log("Error", error);
+        fetchallproducts();
+    }, []);
+
+    const handlesearch = (event) => {
+        const term = event.target.value.toLowerCase();
+        setsearch(term);
+        if (term === '') {
+            setfilterproduct(allproducts);
+        } else {
+            const filtered = allproducts.filter((product) => product.name.toLowerCase().includes(term));
+            setfilterproduct(filtered);
         }
     }
 
-    useEffect(() => {
-        fetchproducts();
-    }, [])
+    const indexoflastproduct = currentpage * pagesize;
+    const indexoffirstproduct = indexoflastproduct - pagesize;
+    const currentproduct = filterproduct.slice(
+        indexoffirstproduct,
+        indexoflastproduct,
+    );
+
+    const handlenextpage = () => {
+        setcurrentpage((prevpage) => prevpage + 1);
+    };
+
+    const handlepreviouspage = () => {
+        setcurrentpage((prevpage) => Math.max(prevpage - 1, 1));
+    }
 
     const handleaddcart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
@@ -197,7 +201,7 @@ const Shop = () => {
 
     const handlewishlist = (item) => {
         const isitemsexists = wishitems.items.some(wishitem => wishitem.id === item.id);
-        if(!isitemsexists) {
+        if (!isitemsexists) {
             dispatch(addtowishlist(item));
             toast.success(`${item.name} is added to wishlist`);
         }
@@ -211,63 +215,47 @@ const Shop = () => {
             {loading ? (
                 <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
             ) : (
-                <Styledsection>
-                    <div id='sidebar'>
-                        <h1>Filter</h1 >
-                        <input id='search' type="text" placeholder="Search here..." value={search} onChange={(e) => setsearch(e.target.value)} />
-                        <h5 className='mt-3'>Search by Category</h5>
-                        <div className="form-check">
-                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label className="form-check-label" for="flexCheckDefault">
-                                Vegetables
-                            </label>
-                        </div>
-                        <div className="form-check">
-                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label className="form-check-label" for="flexCheckDefault">
-                                Fruits
-                            </label>
-                        </div>
-                        <div className="form-check">
-                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label className="form-check-label" for="flexCheckDefault">
-                                Dairy
-                            </label>
-                        </div>
-                    </div >
-                    <div id='shop-products'>
-                        <div className="container">
-                            <div className='row'>
-                                {allproducts.map((product) => (
-                                    <div className='mb-3 col-md-3 col-lg-4 col-xl-3 col-6" mx-0' key={product.id} >
-                                        <div className="card">
-                                            <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
-                                            <div className="card-body">
-                                                <p className="card-text" id='category'>{product.category}</p>
-                                                <h5 className="card-title" id='name'>{product.name}</h5>
-                                                <p className="card-text" id='price'>${product.price}</p>
-                                                <p className='card-text' id='stock'>Stock: {product.stock}</p>
-                                                {product.weigh && <p className='card-text' id='quantity'>Quantity: {product.weigh}kg</p>}
-                                                {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
-                                                {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
-                                                {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
-                                                <div id='icons'>
-                                                    <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
-                                                    <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
-                                                    <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} onClick={() => handlewishlist(product)} /></NavLink>
+                <>
+                    <Styledsection>
+                        <div id='shop-products' className='container'>
+                            <div className="container">
+                                <input className='container mb-3 p-3' style={{ height: '3rem' }} type='text' placeholder='search here' value={search} onChange={handlesearch} />
+                                <div className='row'>
+                                    {currentproduct.length > 0 ? (
+                                        currentproduct.map((product) => (
+                                            <div className='mb-3 col-md-3 col-lg-4 col-xl-3 col-6" mx-0' key={product.id} >
+                                                <div className="card">
+                                                    <img src={product.imageurl} className="card-img-top" alt='Product Picture' />
+                                                    <div className="card-body">
+                                                        <p className="card-text" id='category'>{product.category}</p>
+                                                        <h5 className="card-title" id='name'>{product.name}</h5>
+                                                        <p className="card-text" id='price'>${product.price}</p>
+                                                        <p className='card-text' id='stock'>Stock: {product.stock}</p>
+                                                        {product.weigh && <p className='card-text' id='quantity'>Quantity: {product.weigh}kg</p>}
+                                                        {product.bunch && <p className='card-text' id='bunch'>Bunch: {product.bunch}</p>}
+                                                        {product.size && <p className='card-text' id='size'>Size: {product.size} </p>}
+                                                        {product.dozen && <p className="card-text" id='dozen'>Dozen: {product.dozen} </p>}
+                                                        <div id='icons'>
+                                                            <NavLink className='icons' to={'/ProductDetail'} onClick={() => handledetail(product)}><MdLink className='icon' size={"1.1rem"} /></NavLink>
+                                                            <NavLink className='icons'><IoCartSharp className='icon' size={"1.1rem"} onClick={() => handleaddcart(product)} /></NavLink>
+                                                            <NavLink className='icons'><IoMdHeart className='icon' size={"1.1rem"} onClick={() => handlewishlist(product)} /></NavLink>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                ))};
+                                        ))
+                                    ) : (
+                                        <p className='container card-text'> No Products </p>
+                                    )}
+                                </div>
+                            </div>
+                            <div id='buttons'>
+                                <button onClick={handlepreviouspage} disabled={currentpage === 1} >&laquo;</button>
+                                <button onClick={handlenextpage} disabled={indexoflastproduct >= filterproduct.length} >&raquo;</button>
                             </div>
                         </div>
-                        <div id='buttons'>
-                            <button onClick={() => { setcurrentpage(currentpage - 1); fetchproducts(); }} disabled={currentpage === 1} >&laquo;</button>
-                            <button onClick={nextfetch}>&raquo;</button>
-                        </div>
-                    </div>
-                </Styledsection >
+                    </Styledsection >
+                </>
             )}
         </>
     );

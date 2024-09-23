@@ -10,29 +10,13 @@ const loadwishlistfromlocalstorage = () => {
     }
 }
 
-const loadcartfromlocalstorage = () => {
-    try {
-        const saveditem = localStorage.getItem('cartitem');
-        return saveditem ? JSON.parse(saveditem) : [];
-    } catch (error) {
-        console.log("Error in cart from local storage:", error);
-        return [];
-    }
-}
-
 const updatelocalstorage = (wishitems) => {
     localStorage.setItem('wishlist', JSON.stringify(wishitems));
     localStorage.setItem('wishcount', JSON.stringify(wishitems));
 }
 
-const updatecartstorage = (cartitem) => {
-    localStorage.setItem('cartitem', JSON.stringify(cartitem));
-    localStorage.setItem('cartcount', JSON.stringify(cartitem));
-}
-
 const initialState = {
     items: loadwishlistfromlocalstorage(),
-    cart: loadcartfromlocalstorage(),
 };
 
 const WishlistSlice = createSlice({
@@ -52,14 +36,8 @@ const WishlistSlice = createSlice({
             state.wishcount = state.items.length;
             updatelocalstorage(state.items);
         },
-        addtocart(state, action) {
-            state.cart.push(action.payload);
-            localStorage.setItem('cartitem', JSON.stringify(state.cart));
-            state.cartcount = state.cart.length;
-            updatecartstorage(state.cart);
-        },
     }
 });
 
-export const { addtowishlist, removefromwishlist, addtocart } = WishlistSlice.actions;
+export const { addtowishlist, removefromwishlist } = WishlistSlice.actions;
 export default WishlistSlice.reducer;

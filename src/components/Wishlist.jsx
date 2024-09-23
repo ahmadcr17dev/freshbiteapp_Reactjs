@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import { IoCartSharp } from 'react-icons/io5';
-import { addtocart, removefromwishlist } from '../redux/wishlistslice';
+import { removefromwishlist } from '../redux/wishlistslice';
+import { addtocart } from '../redux/CartSlice';
 
 const Styledsection = styled.section`
     display: block;
@@ -320,10 +321,12 @@ const Wishlist = () => {
                                             <div id='label'>
                                                 <p>Price</p>
                                                 <p style={{ margin: '0rem 1.5rem 0rem 1.5rem' }}>Quantity</p>
-                                                <p>SubTotal</p>
+                                                <p>Add to Cart</p>
                                             </div>
                                             <div id='items'>
                                                 <p>${parseFloat(item.price).toFixed(2)}</p>
+                                                <p>{item.quantity}</p>
+                                                <IoCartSharp color={"#393939"} id='carticon' size={'1.3rem'} onClick={() => handlecart(item)} />
                                                 <FaTrash style={{ marginRight: '-15px', marginTop: '5px' }} color={'red'} size={".8rem"} />
                                             </div>
                                         </div>
@@ -347,7 +350,7 @@ const Wishlist = () => {
                                                 <p id='category'>{product.category} / {product.name}</p>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <h3 id='name'>{product.name}</h3>
-                                                    {/* <FaTrash id='trash' onClick={() => handleRemove(product)} /> */}
+                                                    <FaTrash id='trash' onClick={() => handleremove(product)} />
                                                 </div>
                                                 {product.weigh && <p id='quantity'>{product.weigh} kg</p>}
                                                 {product.bunch && <p id='bunch'>{product.bunch}</p>}
@@ -355,9 +358,7 @@ const Wishlist = () => {
                                                 {product.dozen && <p id='dozen'>{product.dozen}</p>}
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <p id='price'>${product.price}</p>
-                                                </div>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '1rem 0rem 0rem 0rem' }}>
-                                                    <h6 style={{ fontSize: '1.3rem', fontWeight: '600' }}>SubTotal</h6>
+                                                    <IoCartSharp color={"#393939"} id='carticon' size={'1.3rem'} onClick={() => handlecart(item)} />
                                                 </div>
                                             </div>
                                         </div>
