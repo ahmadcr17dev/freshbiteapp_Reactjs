@@ -242,11 +242,13 @@ const Wishlist = () => {
         return () => clearTimeout(timer);
     }, [])
 
+    // to remove from wishlist
     const handleremove = (item) => {
         dispatch(removefromwishlist(item));
         toast.success(`${item.name} is removed from wishlist`);
     }
 
+    // to add to cart
     const handlecart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
         if (!isProductInCart) {

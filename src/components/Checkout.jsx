@@ -248,6 +248,7 @@ const Checkout = () => {
     const totalitems = useSelector(totalquantity);
     const totalprice = useSelector(selectCartSubtotal);
 
+    // it contains data of states & cities
     const data = {
         "Islamabad": ["Islamabad"],
         "Punjab": ["Lahore", "Rawalpindi", "Faisalabad", "Multan", "Sargodha", "Bahawalpur"],
@@ -258,12 +259,14 @@ const Checkout = () => {
         "Gilgit Baltistan": ["Balakot", "Skardu"]
     };
 
+    // it will change the cities name based on selected state
     const handleStateChange = (event) => {
         const state = event.target.value;
         setSelectedState(state);
         setCities(data[state] || []);
     };
 
+    // for delaying loading of data
     useEffect(() => {
         const timer = setTimeout(() => {
             const fetchs = async () => {
@@ -279,6 +282,7 @@ const Checkout = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    // it will store data of user in firebase
     const confirmorder = async (e) => {
         e.preventDefault();
         try {

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// to get from local storage for wishlist
 const loadwishlistfromlocalstorage = () => {
     try {
         const savedwishlist = localStorage.getItem('wishlist');
@@ -23,12 +24,14 @@ const WishlistSlice = createSlice({
     name: 'wishlist',
     initialState,
     reducers: {
+        // add to wishlist
         addtowishlist(state, action) {
             state.items.push(action.payload);
             localStorage.setItem('wishlist', JSON.stringify(state.items));
             state.wishcount = state.items.length;
             updatelocalstorage(state.items);
         },
+        // remove from wishlist
         removefromwishlist(state, action) {
             const updatewishlist = state.items.filter(item => item.id !== action.payload.id);
             state.items = updatewishlist;

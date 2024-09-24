@@ -173,6 +173,7 @@ const Navbar = () => {
     const cartcount = useSelector((state) => state.cart.items.length);
     const wishcount = useSelector((state) => state.wishlist.items.length);
 
+    // it will logout the user 
     const logout = () => {
         localStorage.clear('users');
         toast.success("Logout Successfult");
@@ -201,6 +202,7 @@ const Navbar = () => {
                         <NavLink to="/Home">Home</NavLink>
                         <NavLink to='/shop'>Shop</NavLink>
                         <NavLink to="/about">About</NavLink>
+                        {/* if user exist then logout button will be shown otherwise login button will be shown */}
                         {user ? (
                             <NavLink onClick={logout} id='logout'><CiLogout size={"1.5rem"} color={'#383838'} /></NavLink>
                         ) : (
@@ -212,12 +214,14 @@ const Navbar = () => {
                 <div>
                     <div id='wishlist'>
                         <NavLink to='/wishlist'>{<CiHeart size={"1.5rem"} color={"#383838"} />}</NavLink>
+                        {/* wishlist icon count will be updated */}
                         {wishcount >= 0 && (
                             <span className="badge badge-danger">{wishcount}</span>
                         )}
                     </div>
                     <div id='cart'>
                         <NavLink to='/Cart'>{<PiShoppingCartLight size={"1.5rem"} color={"#383838"} />}</NavLink>
+                        {/* cart icon count will be updated */}
                         {cartcount >= 0 && (
                             <span className="badge badge-danger">{cartcount}</span>
                         )}

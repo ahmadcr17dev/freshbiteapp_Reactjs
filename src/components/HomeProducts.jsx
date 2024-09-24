@@ -114,6 +114,7 @@ const HomeProducts = () => {
     const [fruitproducts, setfruitproducts] = useState([]);
     const [otherproducts, setotherproducts] = useState([]);
 
+    // it will fetch products from firebase
     useEffect(() => {
         const fetchProducts = async () => {
             const vegproductsCollection = collection(database, "HomeVegProducts");
@@ -144,6 +145,7 @@ const HomeProducts = () => {
         fetchProducts();
     }, []);
 
+    // it will show/hide respective products
     const vegiesactive = () => {
         document.getElementById("vegies").style.display = "flex";
         document.getElementById("fruits").style.display = "none";

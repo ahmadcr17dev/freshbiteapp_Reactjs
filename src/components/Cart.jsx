@@ -262,6 +262,8 @@ const Cart = () => {
     const subtotal = useSelector(selectCartSubtotal);
     const totalitems = useSelector(totalquantity);
 
+    // for delaying 
+
     useEffect(() => {
         const timer = setTimeout(() => {
             const fetchs = async () => {
@@ -276,24 +278,29 @@ const Cart = () => {
         return () => clearTimeout(timer);
     }, [])
 
+    // to remove an item from cart
     const handleRemove = (name) => {
         dispatch(deletefromcart(name));
         toast.success(`${name.name} is removed from the cart`);
     };
 
+    // for increment of quantity
     const handleincrement = (id) => {
         dispatch(increment(id));
     }
 
+    // for decrement of quantity
     const handledecrement = (id) => {
         dispatch(decrement(id));
     }
 
+    // to clear the whole cart
     const handleclearcart = () => {
         dispatch(clearcart());
         toast.success("Removed all items from the cart");
     }
 
+    // to proceed to checkout
     const handlecheckout = () => {
         dispatch(checkout());
     }
@@ -445,7 +452,7 @@ const Cart = () => {
                                                         <button className='btn' onClick={() => handleincrement(product)} disabled={product.quantity === product.stock} >+</button>
                                                     </div>
                                                 </div>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between',margin: '1rem 0rem 0rem 0rem' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '1rem 0rem 0rem 0rem' }}>
                                                     <h6 style={{ fontSize: '1.3rem', fontWeight: '600' }}>SubTotal</h6>
                                                     <p style={{ fontSize: '1.3rem', fontWeight: '630' }}>${parseFloat(product.price * product.quantity).toFixed(2)}</p>
                                                 </div>
@@ -460,8 +467,8 @@ const Cart = () => {
                                         <p>{totalitems} items</p>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <h4 style={{fontSize: '1.6rem'}}>Total</h4>
-                                        <p style={{color: 'red',fontWeight: '600', fontSize: '1.3rem'}}>${parseFloat(subtotal).toFixed(2)}</p>
+                                        <h4 style={{ fontSize: '1.6rem' }}>Total</h4>
+                                        <p style={{ color: 'red', fontWeight: '600', fontSize: '1.3rem' }}>${parseFloat(subtotal).toFixed(2)}</p>
                                     </div>
                                     <button className='container btn btn-danger' onClick={handlecheckout}>
                                         <NavLink to="/checkout" className='container text-decoration-none text-white'>Prodeed to checkout</NavLink>

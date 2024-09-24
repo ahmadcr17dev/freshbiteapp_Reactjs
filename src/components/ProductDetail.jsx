@@ -219,6 +219,7 @@ const ProductDetail = () => {
     const cartitems = useSelector((state) => state.cart);
     const selectedproduct = useSelector((state) => state.cart.selectedproduct);
 
+    // it will display the data from local storage
     useEffect(() => {
         const timer = setTimeout(() => {
             const fetchproduct = async () => {
@@ -242,6 +243,7 @@ const ProductDetail = () => {
         return () => clearTimeout(timer);
     }, [selectedproduct])
 
+    // it will add the selected product to cart
     const handleaddcart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
         if (!isProductInCart) {

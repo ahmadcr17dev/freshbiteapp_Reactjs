@@ -10,6 +10,8 @@ import "react-multi-carousel/lib/styles.css";
 import { collection, getDocs } from "firebase/firestore";
 import { database } from '../firebase/firebase';
 
+// for hero section of this page
+
 const Styledsection = styled.section`
     display: block;
     margin: 8rem auto 3rem auto;
@@ -91,6 +93,8 @@ const Styledsection = styled.section`
         }
     }
 `;
+
+// for team members
 
 const Styledteam = styled.section`
     display: block;
@@ -190,6 +194,8 @@ const Styledteam = styled.section`
     }
 `;
 
+// for blog section 
+
 const Styledblog = styled.section`
     display: block;
     margin: 4rem auto 3rem auto;
@@ -251,6 +257,8 @@ const Styledblog = styled.section`
     }
 `;
 
+// contains data of team members
+
 const teamdata = [
     {
         id: '1', image: `${i}`, name: 'Annette Black', status: 'General Manager'
@@ -266,6 +274,8 @@ const teamdata = [
     },
 ];
 
+// it will make the carousal of team members responsive
+
 const responsive = {
     desktop: {
         items: 4,
@@ -280,6 +290,8 @@ const responsive = {
         breakpoint: { max: 599, min: 0 },
     }
 };
+
+// it will make the blog responsive
 
 const responsiveblog = {
     desktop: {
@@ -300,6 +312,8 @@ const About = () => {
 
     const [loading, setloading] = useState(true);
     const [blog, setblog] = useState([]);
+
+    // fetch blog data from firebase
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -328,6 +342,7 @@ const About = () => {
                 <p className='container d-flex justify-content-center align-items-center' style={{ marginTop: "5rem" }}> <MoonLoader size={60} color={"red"} /> </p>
             ) : (
                 <>
+                    {/* Hero Section */}
                     <Styledsection>
                         <div id="first-box">
                             <div>
@@ -342,6 +357,8 @@ const About = () => {
                             </div>
                         </div>
                     </Styledsection>
+
+                    {/* Team Member Section */}
                     <Styledteam>
                         <div id="second-box" className="container">
                             <h3>Meet Our Team</h3>
@@ -376,6 +393,8 @@ const About = () => {
                             </div>
                         </div>
                     </Styledteam>
+
+                    {/* Blog Section */}
                     <Styledblog>
                         <div id="third-box" className="container">
                             <h3>Our Blog</h3>

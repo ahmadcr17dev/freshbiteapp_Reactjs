@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { database } from '../firebase/firebase';
-import { collection, getDocs, limit, orderBy, startAfter, query } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
@@ -131,14 +131,13 @@ const Shop = () => {
     const [filterproduct, setfilterproduct] = useState([]);
     const [search, setsearch] = useState();
     const [loading, setloading] = useState(true);
-    const [pricerange, setpricerange] = useState([0, 100]);
-    const [category, setcategory] = useState('all');
     const [currentpage, setcurrentpage] = useState(1);
     const pagesize = 12;
     const dispatch = useDispatch();
     const cartitems = useSelector((state) => state.cart);
     const wishitems = useSelector((state) => state.wishlist);
 
+    // it will display products from firebase
     useEffect(() => {
         const fetchallproducts = async () => {
             try {
@@ -159,6 +158,7 @@ const Shop = () => {
         fetchallproducts();
     }, []);
 
+    // it will show result based on your search
     const handlesearch = (event) => {
         const term = event.target.value.toLowerCase();
         setsearch(term);
@@ -170,6 +170,7 @@ const Shop = () => {
         }
     }
 
+    // for pagination logic
     const indexoflastproduct = currentpage * pagesize;
     const indexoffirstproduct = indexoflastproduct - pagesize;
     const currentproduct = filterproduct.slice(
@@ -177,14 +178,17 @@ const Shop = () => {
         indexoflastproduct,
     );
 
+    // for fetching next products
     const handlenextpage = () => {
         setcurrentpage((prevpage) => prevpage + 1);
     };
 
+    // for fetching previous products
     const handlepreviouspage = () => {
         setcurrentpage((prevpage) => Math.max(prevpage - 1, 1));
     }
 
+    // for adding to cart
     const handleaddcart = (item) => {
         const isProductInCart = cartitems.items.some(cartItem => cartItem.id === item.id);
         if (!isProductInCart) {
@@ -195,10 +199,12 @@ const Shop = () => {
         }
     }
 
+    // for detail of product
     const handledetail = (item) => {
         dispatch(productdetail(item));
     }
 
+    // for adding to wishlist
     const handlewishlist = (item) => {
         const isitemsexists = wishitems.items.some(wishitem => wishitem.id === item.id);
         if (!isitemsexists) {

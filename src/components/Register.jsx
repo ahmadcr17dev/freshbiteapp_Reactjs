@@ -103,6 +103,7 @@ const Register = () => {
     });
     const navigate = useNavigate();
 
+    // it will register the new user in firebase
     const UserRegister = async (e) => {
         e.preventDefault();
         try {
@@ -143,6 +144,7 @@ const Register = () => {
         }
     }
 
+    // it will create a new user with google option
     const googleregister = async () => {
         await signInWithPopup(auth, provider).then((result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);

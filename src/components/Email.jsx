@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { collection, query, where, addDoc, getDocs, Timestamp } from "firebase/firestore";
 import { database } from "../firebase/firebase";
@@ -131,6 +131,7 @@ const Email = () => {
 
     const [Email, setEmail] = useState('');
 
+    // it will check and add email to firebase for subscription. if already exists then it will display a message
     const subscribe = async (e) => {
         e.preventDefault();
         if (Email === "") {

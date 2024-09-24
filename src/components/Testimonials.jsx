@@ -31,6 +31,7 @@ const Styleddiv = styled.div`
     }
 `;
 
+// to make the carousal responsive
 const responsive = {
     desktop: {
         breakpoint: { max: 3000, min: 1024 },
@@ -46,6 +47,7 @@ const responsive = {
     }
 };
 
+// Data of testimonials
 const testidata = [
     {
         id: 1, name: 'Joseph Siant', comment: "The quality of Fresh Bite's fruits, vegetables, and dairy products is consistently top-notch. Everything is always fresh, well-packed, and delivered on time. I couldn't ask for better service!", star: '3.5'

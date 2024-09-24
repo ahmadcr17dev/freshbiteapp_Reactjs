@@ -85,6 +85,7 @@ const Login = () => {
     });
     const navigate = useNavigate();
 
+    // it will check the credentials of auth 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
