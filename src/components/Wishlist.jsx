@@ -360,7 +360,7 @@ const Wishlist = () => {
                                                 {product.dozen && <p id='dozen'>{product.dozen}</p>}
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <p id='price'>${product.price}</p>
-                                                    <IoCartSharp color={"#393939"} id='carticon' size={'1.3rem'} onClick={() => handlecart(item)} />
+                                                    <IoCartSharp color={"#393939"} id='carticon' size={'1.3rem'} onClick={() => handlecart(product)} />
                                                 </div>
                                             </div>
                                         </div>

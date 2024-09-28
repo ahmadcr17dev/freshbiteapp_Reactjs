@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } f
 import { auth, database, provider } from '../firebase/firebase';
 import { FcGoogle } from "react-icons/fc";
 import toast from 'react-hot-toast';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { doc, addDoc, collection, Timestamp, setDoc } from 'firebase/firestore';
 
 const Styledlogo = styled.img`
     width: 7rem;
@@ -101,17 +101,22 @@ const Register = () => {
         password: "",
         role: "user"
     });
+    const [error, seterror] = useState(null);
     const navigate = useNavigate();
 
     // it will register the new user in firebase
     const UserRegister = async (e) => {
         e.preventDefault();
+        seterror(null);
         try {
-            const users = await createUserWithEmailAndPassword(auth, register.email, register.password);
-            const user = {
+            const usercredentials = await createUserWithEmailAndPassword(auth, register.email, register.password);
+            const user = usercredentials.user;
+            console.log('User registered:', user);
+            const usercollection = collection(database, 'user');
+            await addDoc(usercollection, {
                 name: register.name,
-                email: users.user.email,
-                uid: users.user.uid,
+                email: user.email,
+                uid: user.uid,
                 role: register.role,
                 time: Timestamp.now(),
                 date: new Date().toLocaleString(
@@ -119,28 +124,29 @@ const Register = () => {
                     {
                         month: 'short',
                         day: '2-digit',
-                        year: 'numeric'
+                        year: 'numeric',
                     }
                 )
-            };
-            const userref = collection(database, 'user');
-            addDoc(userref, user);
-
+            });
             setregister({
                 name: "",
                 email: "",
                 password: "",
             })
-
             toast.success("Registration Successful");
             navigate('/Login');
-            console.log("Account Created", users);
+            console.log("Account Created", user);
         } catch (error) {
-            toast.error("User Already Existed");
-            setEmail('');
-            setPassword('');
-            setCnfrmpassword('');
-            console.log("Already Exists");
+            if (error.code === 'auth/email-already-in-use') {
+                toast.error('The email address is already in use by another account.');
+            }
+            else {
+                seterror(error.message);
+            }
+            // setEmail('');
+            // setPassword('');
+            // setCnfrmpassword('');
+            // console.log("Already Exists");
         }
     }
 
@@ -177,7 +183,7 @@ const Register = () => {
                 <form onSubmit={UserRegister}>
                     <div className="mb-0" style={{ flexDirection: "column" }}>
                         <label for="exampleInputEmail1" className="form-label">Name</label>
-                        <input type="name" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder='Name' required value={register.name} onChange={(e) => setregister({ ...register, name: e.target.value })} />
+                        <input type="name" className="form-control" id="exampleInputEmail" aria-describedby="emailHelp" placeholder='Name' required value={register.name} onChange={(e) => setregister({ ...register, name: e.target.value })} />
                     </div>
                     <div className="mb-0" style={{ flexDirection: "column" }}>
                         <label for="exampleInputEmail1" className="form-label">Email</label>
